@@ -35,6 +35,9 @@
           packages = with pkgs; [
             nodejs-slim
             pnpm
+
+            skills
+            git
           ];
         };
     };
