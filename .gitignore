@@ -4,3 +4,4 @@ dist
 .direnv/
 .ncap-cache/
 .astro/
+.playwright-cli/

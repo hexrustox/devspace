@@ -11,7 +11,7 @@
       inherit inputs;
 
       devShell = {
-        image = "ubuntu:latest";
+        image = "mcr.microsoft.com/playwright:v1.62.0-noble";
         socketPath = "/tmp/devspace/ncap-socket";
         containerName = "devspace";
         extraOptions = [
@@ -21,9 +21,15 @@
           "$PNPM_HOME:$PNPM_HOME"
           "-p"
           "127.0.0.1:4321:4321"
+          "-v"
+          "ms-playwright:/ms-playwright"
         ];
         wrappers = [
           "pnpm"
+          {
+            name = "playwright-cli";
+            value = "pnpm exec playwright-cli";
+          }
         ];
         preShellHook = ''
           export PNPM_HOME=''${PNPM_HOME:-$HOME/.local/share/pnpm}
@@ -37,7 +43,6 @@
           packages = with pkgs; [
             nodejs-slim
             pnpm
-            cacert
 
             skills
             git
