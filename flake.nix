@@ -11,6 +11,7 @@
       inherit inputs;
 
       devShell = {
+        image = "ubuntu:latest";
         socketPath = "/tmp/devspace/ncap-socket";
         containerName = "devspace";
         extraOptions = [
@@ -18,9 +19,10 @@
           "PNPM_HOME"
           "-v"
           "$PNPM_HOME:$PNPM_HOME"
+          "-p"
+          "127.0.0.1:4321:4321"
         ];
         wrappers = [
-          "npm"
           "pnpm"
         ];
         preShellHook = ''
@@ -35,6 +37,7 @@
           packages = with pkgs; [
             nodejs-slim
             pnpm
+            cacert
 
             skills
             git
