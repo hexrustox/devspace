@@ -36,13 +36,16 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/language-server": "^2.16.15",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.1",
     "jsdom": "^30.0.1",
+    "prettier-plugin-astro": "^0.14.1",
     "typescript": "^6.0.2",
+    "typescript-language-server": "^6.0.0",
     "vitest": "^4.1.11"
   }
 }

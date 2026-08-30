@@ -23,9 +23,22 @@
           "127.0.0.1:4321:4321"
           "-v"
           "ms-playwright:/ms-playwright"
+          "--pid=host"
         ];
         wrappers = [
           "pnpm"
+           {
+            name = "astro-ls";
+            value = "node_modules/.bin/astro-ls";
+          }
+          {
+            name = "typescript-language-server";
+            value = "node_modules/.bin/typescript-language-server";
+          }
+          {
+            name = "prettier";
+            value = "pnpm exec prettier";
+          }
           {
             name = "playwright-cli";
             value = "pnpm exec playwright-cli";
