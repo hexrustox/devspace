@@ -14,6 +14,9 @@
   --text-display: 4.5rem;
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.04em;
+  --text-heading: 2rem;
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.02em;
   --text-body: 1rem;
   --text-body--line-height: 1.6;
   --text-caption: 0.8125rem;

@@ -1,0 +1,24 @@
+---
+import { identity } from "../content";
+---
+
+<section class="grid min-h-screen place-items-center">
+  <div class="flex flex-col items-center text-center">
+    <h1 class="font-display text-display">{identity.title}</h1>
+    <p class="text-body text-muted mt-6 max-w-xl">{identity.bio}</p>
+    <div class="mt-8 flex gap-4">
+      <a
+        href="#"
+        class="bg-text text-(--color-base) hover:bg-text/90 focus-visible:outline-text rounded-full px-6 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        View projects
+      </a>
+      <a
+        href="#"
+        class="text-text border-text/25 hover:bg-surface focus-visible:outline-text rounded-full border px-6 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        Contact me
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,124 @@
+---
+import { skills } from "../content";
+import {
+  Atom,
+  FileCode,
+  FlaskConical,
+  Hexagon,
+  Rocket,
+  Wind,
+  X,
+} from "@lucide/astro";
+
+const icons = {
+  "file-code": FileCode,
+  atom: Atom,
+  hexagon: Hexagon,
+  rocket: Rocket,
+  wind: Wind,
+  "flask-conical": FlaskConical,
+};
+
+const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+---
+
+<section id="skills" class="mx-auto max-w-5xl px-6 py-24">
+  <h2 class="font-display text-heading">Skills</h2>
+  <ul
+    class="mt-10 grid list-none grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-3 p-0"
+  >
+    {
+      skills.map((skill) => {
+        const Icon = icons[skill.icon];
+        const id = `skill-${slug(skill.name)}`;
+        return (
+          <li>
+            <button
+              type="button"
+              class="group relative flex aspect-square flex-col items-center justify-start rounded-2xl border border-text/10 p-4 text-center transition-[transform,background-color,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:scale-105 hover:border-text/25 hover:bg-surface hover:shadow-xl hover:shadow-black/40 focus-visible:-translate-y-1 focus-visible:scale-105 focus-visible:border-text/40 focus-visible:bg-surface focus-visible:shadow-xl focus-visible:shadow-black/40 focus-visible:outline-none"
+              aria-haspopup="dialog"
+              aria-controls={`${id}-dialog`}
+              data-skill-dialog
+            >
+              <span class="mt-8 flex transition-[margin-top,color] duration-300 ease-out group-hover:mt-2 group-focus-visible:mt-2">
+                <Icon
+                  size={28}
+                  stroke-width={1.5}
+                  class="text-muted transition-colors duration-300 group-hover:text-text group-focus-visible:text-text"
+                />
+              </span>
+              <span class="font-display mt-3 text-body">{skill.name}</span>
+              <span class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr]">
+                <span class="overflow-hidden">
+                  <span class="text-caption text-muted mt-0 block opacity-0 transition-[opacity,margin-top] duration-300 ease-out group-hover:mt-2 group-hover:opacity-100 group-focus-visible:mt-2 group-focus-visible:opacity-100">
+                    {skill.blurb}
+                  </span>
+                </span>
+              </span>
+            </button>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  {
+    skills.map((skill) => {
+      const id = `skill-${slug(skill.name)}`;
+      return (
+        <dialog
+          id={`${id}-dialog`}
+          aria-labelledby={`${id}-title`}
+          class="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-text/10 bg-surface p-0 text-text shadow-2xl backdrop:bg-black/70"
+        >
+          <div class="relative p-6">
+            <button
+              type="button"
+              class="text-muted hover:bg-text/10 hover:text-text absolute top-3 right-3 rounded-full p-2"
+              aria-label={`Close ${skill.name}`}
+              data-close
+            >
+              <X size={16} stroke-width={1.5} />
+            </button>
+            <h3 id={`${id}-title`} class="font-display text-heading pr-8">
+              {skill.name}
+            </h3>
+            <p class="text-body text-muted mt-4">{skill.description}</p>
+            {skill.url && (
+              <a
+                href={skill.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="border-text/25 hover:bg-text/10 focus-visible:outline-text mt-6 inline-flex rounded-full border px-5 py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline"
+              >
+                Visit website
+              </a>
+            )}
+          </div>
+        </dialog>
+      );
+    })
+  }
+</section>
+
+<script>
+  for (const opener of document.querySelectorAll<HTMLButtonElement>(
+    "[data-skill-dialog]",
+  )) {
+    opener.addEventListener("click", () => {
+      const dialog = document.getElementById(
+        opener.getAttribute("aria-controls") ?? "",
+      );
+      if (dialog instanceof HTMLDialogElement) dialog.showModal();
+    });
+  }
+
+  for (const dialog of document.querySelectorAll("dialog")) {
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    for (const closer of dialog.querySelectorAll("[data-close]")) {
+      closer.addEventListener("click", () => dialog.close());
+    }
+  }
+</script>
