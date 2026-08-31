@@ -16,7 +16,7 @@
 - Single-page portfolio: `src/pages/index.astro`, layout `src/layouts/Base.astro`
 - `src/content.ts` is the Content Source — all site content (identity, skills, projects) lives there; editing content never touches components
 - Theme tokens (colors, fonts, type scale) live in the `@theme` block of `src/styles/global.css`; use the generated Tailwind utilities (e.g. `font-display`, `text-text`)
-- Read `CONTEXT.md` before naming domain concepts and `docs/adr/` before touching the readme-fetch flow (ADR 0001: readmes fetched at runtime from the Content Source)
+- Read `CONTEXT.md` before naming domain concepts and `docs/adr/` before touching the readme-fetch flow
 
 ## Agent skills
 
@@ -35,6 +35,8 @@ Uses a single-context layout. See `docs/agents/domain.md`.
 ### Browser automation
 
 Uses `playwright-cli` for browser automation and page checks. Always pass `--browser firefox` — Chrome is not installed.
+
+All playwright-cli dump output goes to `.playwright-cli/`.
 
 When verifying pages with playwright-cli, never start the server yourself:
 - If `pnpm dev` is not already running (port 4321), ask the user to start it — never run it yourself
