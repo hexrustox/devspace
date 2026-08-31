@@ -19,3 +19,7 @@ _Avoid_: banner, header
 **Skill**:
 A technology or competency the site owner lists, with a name, a short blurb, a longer description, and an optional official website.
 _Avoid_: technology, stack item
+
+**Project**:
+A software work the site owner lists, with a name and a URL to its GitHub README.
+_Avoid_: repo, work

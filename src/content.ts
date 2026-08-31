@@ -53,3 +53,26 @@ export const skills = [
     url: "https://vitest.dev",
   },
 ] as const;
+
+export type Project = {
+  name: string;
+  readmeUrl: `https://${string}`;
+};
+
+export const projects = [
+  {
+    name: "1",
+    readmeUrl:
+      "https://raw.githubusercontent.com/hexrustox/nix-capsule/refs/heads/main/README.md",
+  },
+  {
+    name: "2",
+    readmeUrl:
+      "https://raw.githubusercontent.com/hexrustox/dotrift/refs/heads/main/README.md",
+  },
+  {
+    name: "3",
+    readmeUrl:
+      "https://raw.githubusercontent.com/hexrustox/octadash/refs/heads/main/README.md",
+  },
+] as const satisfies readonly Project[];
