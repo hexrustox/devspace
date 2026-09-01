@@ -8,7 +8,7 @@
 
 - `pnpm dev` — dev server on port 4321
 - `pnpm check` — typecheck gate: `astro check && tsc --noEmit`. No eslint/prettier/biome in this repo; `check` is the lint+type step (and `pnpm build` runs it too)
-- `pnpm test` — vitest run; single file: `pnpm exec vitest run src/smoke.test.tsx`, single test: add `-t "<name>"`
+- `pnpm test` — vitest run; single file: `pnpm exec vitest run <path>`, single test: add `-t "<name>"`
 - If typecheck fails on missing `.astro/types.d.ts`, run `pnpm exec astro sync` (it's generated, not committed)
 
 ## Architecture
