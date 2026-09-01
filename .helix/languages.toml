@@ -4,10 +4,17 @@ formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
 auto-format = true
 
 [[language]]
+name = "tsx"
+language-servers = [ "typescript-language-server", "tailwindcss-ls" ]
+formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
 name = "javascript"
 formatter = { command = "prettier", args = [ "--parser", "babel" ] }
 auto-format = true
 
 [[language]]
 name = "astro"
+language-servers = [ "astro-ls", "tailwindcss-ls" ]
 auto-format = true

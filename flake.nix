@@ -36,6 +36,10 @@
             value = "node_modules/.bin/typescript-language-server";
           }
           {
+            name = "tailwindcss-language-server";
+            value = "node_modules/.bin/tailwindcss-language-server";
+          }
+          {
             name = "prettier";
             value = "pnpm exec prettier";
           }

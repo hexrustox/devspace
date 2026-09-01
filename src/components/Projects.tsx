@@ -214,7 +214,10 @@ export default function Projects({ projects }: Props) {
       <input {...props} className="mr-1.5 align-middle" />
     ),
     h1: ({ node, ...props }) => (
-      <h1 {...props} className="font-display text-heading mt-8 mb-4 first:mt-0" />
+      <h1
+        {...props}
+        className="font-display text-heading mt-8 mb-4 first:mt-0"
+      />
     ),
     h2: ({ node, ...props }) => (
       <h2 {...props} className="font-display text-xl mt-8 mb-3 first:mt-0" />
@@ -264,9 +267,7 @@ export default function Projects({ projects }: Props) {
         /language-mermaid/.test(child.props.className ?? "")
       ) {
         return (
-          <Mermaid
-            chart={String(child.props.children).replace(/\n$/, "")}
-          />
+          <Mermaid chart={String(child.props.children).replace(/\n$/, "")} />
         );
       }
       return (
