@@ -1,0 +1,9 @@
+---
+import Section from "./Section.astro";
+import { projects } from "../content";
+import ProjectBrowser from "./ProjectBrowser";
+---
+
+<Section id="projects" title="Projects">
+  <ProjectBrowser client:visible projects={projects} />
+</Section>
