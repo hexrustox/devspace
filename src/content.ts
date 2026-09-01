@@ -3,56 +3,105 @@ export const identity = {
   bio: "I turn ambiguous problems into shipped software. TypeScript-first, design-minded, allergic to accidental complexity.",
 } as const;
 
-export const skills = [
+export type Skill = {
+  name: string;
+  icon: string;
+  blurb: string;
+  url: `https://${string}` | null;
+};
+
+export const skills: Skill[] = [
   {
     name: "TypeScript",
-    icon: "file-code",
-    blurb: "Types that make invalid states unrepresentable.",
-    description:
-      "My default language for anything that runs. I use the type system as a design tool — modeling the domain first so refactors stay boring.",
+    icon: "devicon-typescript-plain",
+    blurb: "Strongly typed superset of JavaScript",
     url: "https://www.typescriptlang.org",
   },
   {
-    name: "React",
-    icon: "atom",
-    blurb: "Composable UI, minimal ceremony.",
-    description:
-      "Component architecture, hooks, and server-aware rendering patterns. I care about hydration cost and interfaces that hold up as they grow.",
-    url: "https://react.dev",
-  },
-  {
     name: "Astro",
-    icon: "rocket",
-    blurb: "Static-first, interactive where it counts.",
-    description:
-      "Content-driven sites with zero JS by default and islands only when needed. This portfolio is built on it.",
+    icon: "devicon-astro-plain",
+    blurb: "Static-first web framework for content-driven sites",
     url: "https://astro.build",
   },
   {
-    name: "Node.js",
-    icon: "hexagon",
-    blurb: "APIs, tooling, and automation.",
-    description:
-      "Services and CLIs on the JS runtime — streams, workers, and the npm ecosystem's sharp edges included.",
-    url: "https://nodejs.org",
+    name: "React",
+    icon: "devicon-react-plain",
+    blurb: "Component-based library for building user interfaces",
+    url: "https://react.dev",
   },
   {
-    name: "Tailwind CSS",
-    icon: "wind",
-    blurb: "Design tokens as utilities.",
-    description:
-      "Design systems expressed as utility classes over a token layer — consistent scales without leaving the markup.",
-    url: "https://tailwindcss.com",
+    name: "Rust",
+    icon: "devicon-rust-plain",
+    blurb: "Systems language focused on safety and performance",
+    url: "https://www.rust-lang.org",
   },
   {
-    name: "Testing",
-    icon: "flask-conical",
-    blurb: "Tests as a design pressure.",
-    description:
-      "Vitest, Testing Library, and CI gates. I test behavior, not implementation, and let the suite shape the architecture.",
-    url: "https://vitest.dev",
+    name: "Nix",
+    icon: "devicon-nixos-plain",
+    blurb: "Declarative package manager for reproducible environments",
+    url: "https://nixos.org",
   },
-] as const;
+  {
+    name: "Python",
+    icon: "devicon-python-plain",
+    blurb: "High-level language for automation and general-purpose development",
+    url: "https://www.python.org",
+  },
+  {
+    name: "C#",
+    icon: "devicon-csharp-plain",
+    blurb: "Modern object-oriented language for the .NET platform",
+    url: "https://learn.microsoft.com/en-us/dotnet/csharp/",
+  },
+  {
+    name: "Angular",
+    icon: "devicon-angular-plain",
+    blurb: "Full-featured framework for large-scale single-page applications",
+    url: "https://angular.dev",
+  },
+  {
+    name: "Vue",
+    icon: "devicon-vuejs-plain",
+    blurb: "Progressive framework for building user interfaces",
+    url: "https://vuejs.org",
+  },
+  {
+    name: "PowerShell",
+    icon: "devicon-powershell-plain",
+    blurb: "Cross-platform shell and scripting language for automation",
+    url: "https://learn.microsoft.com/en-us/powershell/",
+  },
+  {
+    name: "PostgreSQL",
+    icon: "devicon-postgresql-plain",
+    blurb: "Advanced open-source relational database",
+    url: "https://www.postgresql.org",
+  },
+  {
+    name: "Azure",
+    icon: "devicon-azure-plain",
+    blurb: "Microsoft cloud platform for hosting, identity and infrastructure",
+    url: "https://azure.microsoft.com",
+  },
+  {
+    name: "Docker",
+    icon: "devicon-docker-plain",
+    blurb: "Platform for building and running containerized applications",
+    url: "https://www.docker.com",
+  },
+  {
+    name: "Linux",
+    icon: "devicon-linux-plain",
+    blurb: "Open-source Unix-like operating system kernel",
+    url: "https://www.kernel.org",
+  },
+  {
+    name: "Ansible",
+    icon: "devicon-ansible-plain",
+    blurb: "Automation tool for configuration management and provisioning",
+    url: "https://docs.ansible.com",
+  },
+];
 
 export type Project = {
   name: string;

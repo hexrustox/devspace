@@ -29,6 +29,7 @@
     "@playwright/cli": "^0.1.18",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.9",
+    "devicon": "^2.17.0",
     "lenis": "^1.3.26",
     "mermaid": "^11.17.2",
     "motion": "^13.1.1",
