@@ -1,8 +1,3 @@
-export const identity = {
-  title: "software engineer",
-  bio: "I turn ambiguous problems into shipped software. TypeScript-first, design-minded, allergic to accidental complexity.",
-} as const;
-
 export type Skill = {
   name: string;
   icon: string;
