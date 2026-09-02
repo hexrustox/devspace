@@ -1,0 +1,44 @@
+---
+import Glass from "./Glass";
+import {
+  contactLinks,
+  contactHeading,
+  contactBlurb,
+  contactAvailability,
+} from "../content";
+---
+
+<section id="contact" class="grid min-h-[70vh] place-items-center px-6">
+  <div class="flex flex-col items-center text-center">
+    <h2 class="font-display text-display font-bold">{contactHeading}</h2>
+    <p class="text-body text-muted mt-6 max-w-xl">{contactBlurb}</p>
+    <p class="text-caption text-muted mt-6 flex items-center gap-2">
+      <span class="relative flex size-2" aria-hidden="true">
+        <span
+          class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-60"
+        ></span>
+        <span class="relative inline-flex size-2 rounded-full bg-green"></span>
+      </span>
+      {contactAvailability}
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      {
+        contactLinks.map((link) => {
+          const isExternal = link.url.startsWith("https://");
+          return (
+            <Glass>
+              <a
+                href={link.url}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                class="font-display font-bold min-w-40 flex justify-center items-center py-3 focus-visible:outline-none"
+              >
+                {link.label}
+              </a>
+            </Glass>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

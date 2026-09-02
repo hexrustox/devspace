@@ -23,3 +23,7 @@ _Avoid_: technology, stack item
 **Project**:
 A software work the site owner lists, with a name and a URL to its GitHub README.
 _Avoid_: repo, work
+
+**Contact**:
+The Content Source section closing the page: a heading, a blurb, an availability note, and links to reach the site owner (email, GitHub, GitLab).
+_Avoid_: socials, links

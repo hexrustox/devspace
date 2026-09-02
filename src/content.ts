@@ -120,3 +120,19 @@ export const projects: Project[] = [
       "https://raw.githubusercontent.com/hexrustox/dotrift/refs/heads/main/README.md",
   },
 ];
+
+export type ContactLink = {
+  label: string;
+  url: `https://${string}` | `mailto:${string}`;
+};
+
+export const contactLinks: ContactLink[] = [
+  { label: "Email", url: "mailto:hello@example.com" },
+  { label: "GitHub", url: "https://github.com/hexrustox" },
+  { label: "GitLab", url: "https://gitlab.com/codnixus" },
+];
+
+export const contactHeading = "Say hello.";
+export const contactBlurb =
+  "The fastest way to reach me is email — I'm also on GitHub and GitLab.";
+export const contactAvailability = "Open to work";
