@@ -21,6 +21,8 @@
           "$PNPM_HOME:$PNPM_HOME"
           "-p"
           "127.0.0.1:4321:4321"
+          "-p"
+          "127.0.0.1:3001:3001"
           "-v"
           "ms-playwright:/ms-playwright"
           "--pid=host"
@@ -60,6 +62,8 @@
           packages = with pkgs; [
             nodejs-slim
             pnpm
+
+            caddy
 
             skills
             git
