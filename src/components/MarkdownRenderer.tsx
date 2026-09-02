@@ -1,7 +1,9 @@
 import {
   isValidElement,
+  memo,
   useEffect,
   useId,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -32,6 +34,9 @@ const resolveSrcSet = (value: string, base: string) =>
     .filter(Boolean)
     .join(", ");
 
+const remarkPlugins = [remarkGfm];
+const rehypePlugins = [rehypeRaw, rehypeSanitize];
+
 const mermaidThemeVariables = {
   background: "#0a0a0b",
   primaryColor: "#131316",
@@ -61,7 +66,7 @@ function Mermaid({ chart }: { chart: string }) {
           startOnLoad: false,
           securityLevel: "strict",
           theme: "dark",
-          themeVariables: { ...mermaidThemeVariables },
+          themeVariables: mermaidThemeVariables,
         });
         return mermaid.render(`mermaid-${uid}`, chart).then(({ svg }) => {
           if (!cancelled) setSvg(svg);
@@ -102,130 +107,142 @@ interface RendererProps {
   base: string;
 }
 
-export default function MarkdownRenderer({ markdown, base }: RendererProps) {
-  const components: Components = {
-    a: ({ node, children, ...props }) => (
-      <a {...props} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    ),
-    img: ({ node, alt, src, ...props }) => (
-      <img
-        {...props}
-        src={typeof src === "string" ? resolveSrc(src, base) : src}
-        alt={alt ?? ""}
-        loading="lazy"
-        className="inline-block h-auto max-w-full align-middle"
-      />
-    ),
-    source: ({ node, srcSet, ...props }) => (
-      <source
-        {...props}
-        srcSet={
-          typeof srcSet === "string" ? resolveSrcSet(srcSet, base) : srcSet
-        }
-      />
-    ),
-    kbd: ({ node, ...props }) => (
-      <kbd
-        {...props}
-        className="text-caption rounded border border-text/10 bg-base px-1.5 py-0.5 font-mono"
-      />
-    ),
-    summary: ({ node, ...props }) => (
-      <summary {...props} className="cursor-pointer" />
-    ),
-    input: ({ node, ...props }) => (
-      <input {...props} className="mr-1.5 align-middle" />
-    ),
-    h1: ({ node, ...props }) => (
-      <h1
-        {...props}
-        className="font-display text-heading mt-8 mb-4 first:mt-0"
-      />
-    ),
-    h2: ({ node, ...props }) => (
-      <h2 {...props} className="font-display text-xl mt-8 mb-3 first:mt-0" />
-    ),
-    h3: ({ node, ...props }) => (
-      <h3 {...props} className="font-display text-lg mt-6 mb-2 first:mt-0" />
-    ),
-    h4: ({ node, ...props }) => (
-      <h4 {...props} className="font-display text-body mt-6 mb-2 first:mt-0" />
-    ),
-    p: ({ node, ...props }) => (
-      <p {...props} className="text-body my-3 first:mt-0" />
-    ),
-    strong: ({ node, ...props }) => (
-      <strong {...props} className="font-semibold text-text" />
-    ),
-    ul: ({ node, ...props }) => (
-      <ul
-        {...props}
-        className="text-body my-3 list-disc space-y-1 pl-6 marker:text-muted"
-      />
-    ),
-    ol: ({ node, ...props }) => (
-      <ol
-        {...props}
-        className="text-body my-3 list-decimal space-y-1 pl-6 marker:text-muted"
-      />
-    ),
-    li: ({ node, ...props }) => <li {...props} className="pl-1" />,
-    blockquote: ({ node, ...props }) => (
-      <blockquote
-        {...props}
-        className="text-muted my-4 border-l-2 border-text/20 pl-4 italic"
-      />
-    ),
-    code: ({ node, ...props }) => (
-      <code
-        {...props}
-        className="text-caption rounded border border-text/10 bg-base px-1.5 py-0.5 font-mono"
-      />
-    ),
-    pre: ({ node, ...props }) => {
-      const { children } = props;
-      const child = Array.isArray(children) ? children[0] : children;
-      if (
-        isValidElement<{ className?: string; children?: ReactNode }>(child) &&
-        /language-mermaid/.test(child.props.className ?? "")
-      ) {
-        return (
-          <Mermaid chart={String(child.props.children).replace(/\n$/, "")} />
-        );
-      }
-      return (
-        <pre
+export default memo(function MarkdownRenderer({
+  markdown,
+  base,
+}: RendererProps) {
+  const components: Components = useMemo(
+    () => ({
+      a: ({ node, children, ...props }) => (
+        <a {...props} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      ),
+      img: ({ node, alt, src, ...props }) => (
+        <img
           {...props}
-          className="[&>code]:rounded-none [&>code]:border-0 [&>code]:bg-transparent [&>code]:px-0 [&>code]:py-0 my-4 overflow-x-auto rounded-xl border border-text/10 bg-base p-4 text-caption leading-relaxed"
+          src={typeof src === "string" ? resolveSrc(src, base) : src}
+          alt={alt ?? ""}
+          loading="lazy"
+          className="inline-block h-auto max-w-full align-middle"
         />
-      );
-    },
-    table: ({ node, ...props }) => (
-      <table {...props} className="text-caption my-4 w-full border-collapse" />
-    ),
-    th: ({ node, ...props }) => (
-      <th
-        {...props}
-        className="border border-text/10 px-3 py-2 text-left font-semibold"
-      />
-    ),
-    td: ({ node, ...props }) => (
-      <td {...props} className="border border-text/10 px-3 py-2 align-top" />
-    ),
-    hr: ({ node, ...props }) => (
-      <hr {...props} className="my-6 border-text/10" />
-    ),
-  };
+      ),
+      source: ({ node, srcSet, ...props }) => (
+        <source
+          {...props}
+          srcSet={
+            typeof srcSet === "string" ? resolveSrcSet(srcSet, base) : srcSet
+          }
+        />
+      ),
+      kbd: ({ node, ...props }) => (
+        <kbd
+          {...props}
+          className="text-caption rounded border border-text/10 bg-base px-1.5 py-0.5 font-mono"
+        />
+      ),
+      summary: ({ node, ...props }) => (
+        <summary {...props} className="cursor-pointer" />
+      ),
+      input: ({ node, ...props }) => (
+        <input {...props} className="mr-1.5 align-middle" />
+      ),
+      h1: ({ node, ...props }) => (
+        <h1
+          {...props}
+          className="font-display text-heading mt-8 mb-4 first:mt-0"
+        />
+      ),
+      h2: ({ node, ...props }) => (
+        <h2 {...props} className="font-display text-xl mt-8 mb-3 first:mt-0" />
+      ),
+      h3: ({ node, ...props }) => (
+        <h3 {...props} className="font-display text-lg mt-6 mb-2 first:mt-0" />
+      ),
+      h4: ({ node, ...props }) => (
+        <h4
+          {...props}
+          className="font-display text-body mt-6 mb-2 first:mt-0"
+        />
+      ),
+      p: ({ node, ...props }) => (
+        <p {...props} className="text-body my-3 first:mt-0" />
+      ),
+      strong: ({ node, ...props }) => (
+        <strong {...props} className="font-semibold text-text" />
+      ),
+      ul: ({ node, ...props }) => (
+        <ul
+          {...props}
+          className="text-body my-3 list-disc space-y-1 pl-6 marker:text-muted"
+        />
+      ),
+      ol: ({ node, ...props }) => (
+        <ol
+          {...props}
+          className="text-body my-3 list-decimal space-y-1 pl-6 marker:text-muted"
+        />
+      ),
+      li: ({ node, ...props }) => <li {...props} className="pl-1" />,
+      blockquote: ({ node, ...props }) => (
+        <blockquote
+          {...props}
+          className="text-muted my-4 border-l-2 border-text/20 pl-4 italic"
+        />
+      ),
+      code: ({ node, ...props }) => (
+        <code
+          {...props}
+          className="text-caption rounded border border-text/10 bg-base px-1.5 py-0.5 font-mono"
+        />
+      ),
+      pre: ({ node, ...props }) => {
+        const { children } = props;
+        const child = Array.isArray(children) ? children[0] : children;
+        if (
+          isValidElement<{ className?: string; children?: ReactNode }>(child) &&
+          /language-mermaid/.test(child.props.className ?? "")
+        ) {
+          return (
+            <Mermaid chart={String(child.props.children).replace(/\n$/, "")} />
+          );
+        }
+        return (
+          <pre
+            {...props}
+            className="[&>code]:rounded-none [&>code]:border-0 [&>code]:bg-transparent [&>code]:px-0 [&>code]:py-0 my-4 overflow-x-auto rounded-xl border border-text/10 bg-base p-4 text-caption leading-relaxed"
+          />
+        );
+      },
+      table: ({ node, ...props }) => (
+        <table
+          {...props}
+          className="text-caption my-4 w-full border-collapse"
+        />
+      ),
+      th: ({ node, ...props }) => (
+        <th
+          {...props}
+          className="border border-text/10 px-3 py-2 text-left font-semibold"
+        />
+      ),
+      td: ({ node, ...props }) => (
+        <td {...props} className="border border-text/10 px-3 py-2 align-top" />
+      ),
+      hr: ({ node, ...props }) => (
+        <hr {...props} className="my-6 border-text/10" />
+      ),
+    }),
+    [base],
+  );
 
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={rehypePlugins}
       components={components}
     >
       {markdown}
     </ReactMarkdown>
   );
-}
+});

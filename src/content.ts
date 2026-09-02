@@ -103,20 +103,20 @@ export type Project = {
   readmeUrl: `https://${string}`;
 };
 
-export const projects = [
+export const projects: Project[] = [
   {
-    name: "1",
+    name: "OctaDash",
+    readmeUrl:
+      "https://raw.githubusercontent.com/hexrustox/octadash/refs/heads/main/README.md",
+  },
+  {
+    name: "Nix Capsule",
     readmeUrl:
       "https://raw.githubusercontent.com/hexrustox/nix-capsule/refs/heads/main/README.md",
   },
   {
-    name: "2",
+    name: "Dotrift",
     readmeUrl:
       "https://raw.githubusercontent.com/hexrustox/dotrift/refs/heads/main/README.md",
   },
-  {
-    name: "3",
-    readmeUrl:
-      "https://raw.githubusercontent.com/hexrustox/octadash/refs/heads/main/README.md",
-  },
-] as const satisfies readonly Project[];
+];

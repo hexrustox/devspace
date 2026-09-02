@@ -1,4 +1,10 @@
 @import "tailwindcss";
+
+@property --wipe {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
 @import "@fontsource-variable/space-grotesk";
 @import "@fontsource-variable/inter";
 
