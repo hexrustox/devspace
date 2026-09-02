@@ -1,12 +1,22 @@
 import {
+  Children,
+  cloneElement,
   isValidElement,
   memo,
   useEffect,
   useId,
   useMemo,
   useState,
+  type ReactElement,
   type ReactNode,
 } from "react";
+import {
+  Info,
+  Lightbulb,
+  MessageSquareWarning,
+  OctagonAlert,
+  TriangleAlert,
+} from "lucide-react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
@@ -37,18 +47,112 @@ const resolveSrcSet = (value: string, base: string) =>
 const remarkPlugins = [remarkGfm];
 const rehypePlugins = [rehypeRaw, rehypeSanitize];
 
-const mermaidThemeVariables = {
-  background: "#0a0a0b",
-  primaryColor: "#131316",
-  secondaryColor: "#131316",
-  tertiaryColor: "#131316",
-  primaryTextColor: "#ededef",
-  textColor: "#ededef",
-  lineColor: "#8a8a93",
-  mainBkg: "#131316",
-  nodeBorder: "#8a8a93",
-  fontSize: "0.875rem",
+const cssVar = (name: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+type HastNode = {
+  type?: string;
+  tagName?: string;
+  value?: string;
+  children?: HastNode[];
+};
+
+const ALERT_MARKER = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i;
+
+const ALERT_TYPES = {
+  NOTE: {
+    label: "Note",
+    className: "border-blue bg-blue/10",
+    titleClassName: "text-blue",
+    icon: Info,
+  },
+  TIP: {
+    label: "Tip",
+    className: "border-green bg-green/10",
+    titleClassName: "text-green",
+    icon: Lightbulb,
+  },
+  IMPORTANT: {
+    label: "Important",
+    className: "border-purple bg-purple/10",
+    titleClassName: "text-purple",
+    icon: MessageSquareWarning,
+  },
+  WARNING: {
+    label: "Warning",
+    className: "border-amber bg-amber/10",
+    titleClassName: "text-amber",
+    icon: TriangleAlert,
+  },
+  CAUTION: {
+    label: "Caution",
+    className: "border-red bg-red/10",
+    titleClassName: "text-red",
+    icon: OctagonAlert,
+  },
 } as const;
+
+type AlertKey = keyof typeof ALERT_TYPES;
+
+const findAlertKey = (node: unknown): AlertKey | null => {
+  const siblings = (node as HastNode | undefined)?.children ?? [];
+  let first: HastNode | undefined;
+  for (const child of siblings) {
+    if (child.type === "element") {
+      first = child;
+      break;
+    }
+  }
+  if (!first || first.tagName !== "p") return null;
+  for (const child of first.children ?? []) {
+    if (child.type === "text") {
+      const match = ALERT_MARKER.exec(child.value ?? "");
+      return match ? (match[1].toUpperCase() as AlertKey) : null;
+    }
+  }
+  return null;
+};
+
+const isEmptyLead = (child: ReactNode) =>
+  typeof child === "string"
+    ? child.trim() === ""
+    : isValidElement(child) && child.type === "br";
+
+const alertBody = (children: ReactNode): ReactNode[] | null => {
+  const items = Children.toArray(children);
+  const firstIndex = items.findIndex((item) => isValidElement(item));
+  if (firstIndex === -1) return null;
+  const first = items[firstIndex];
+  if (!isValidElement<{ children?: ReactNode }>(first)) return null;
+  const inner = first.props.children;
+  let processed: ReactElement<{ children?: ReactNode }> | null;
+  if (typeof inner === "string") {
+    const rest = inner.replace(ALERT_MARKER, "");
+    if (rest === inner) return null;
+    processed = rest.trim() ? cloneElement(first, { children: rest }) : null;
+  } else if (Array.isArray(inner)) {
+    const markerIndex = inner.findIndex(
+      (child) => typeof child === "string" && ALERT_MARKER.test(child),
+    );
+    if (markerIndex === -1) return null;
+    let next: ReactNode[] = inner.map((child, i) =>
+      i === markerIndex && typeof child === "string"
+        ? child.replace(ALERT_MARKER, "")
+        : child,
+    );
+    next = next.filter((child) => child !== "");
+    while (next.length > 0 && isEmptyLead(next[0])) next = next.slice(1);
+    processed =
+      next.length > 0 ? cloneElement(first, { children: next }) : null;
+  } else {
+    return null;
+  }
+  return [
+    ...items.slice(0, firstIndex),
+    ...(processed ? [processed] : []),
+    ...items.slice(firstIndex + 1),
+  ];
+};
 
 function Mermaid({ chart }: { chart: string }) {
   const [svg, setSvg] = useState<string | null>(null);
@@ -66,7 +170,18 @@ function Mermaid({ chart }: { chart: string }) {
           startOnLoad: false,
           securityLevel: "strict",
           theme: "dark",
-          themeVariables: mermaidThemeVariables,
+          themeVariables: {
+            background: cssVar("--color-base"),
+            primaryColor: cssVar("--color-surface"),
+            secondaryColor: cssVar("--color-surface"),
+            tertiaryColor: cssVar("--color-surface"),
+            primaryTextColor: cssVar("--color-text"),
+            mainBkg: cssVar("--color-surface"),
+            nodeBorder: cssVar("--color-muted"),
+            textColor: cssVar("--color-text"),
+            lineColor: cssVar("--color-muted"),
+            fontSize: "0.875rem",
+          },
         });
         return mermaid.render(`mermaid-${uid}`, chart).then(({ svg }) => {
           if (!cancelled) setSvg(svg);
@@ -124,7 +239,7 @@ export default memo(function MarkdownRenderer({
           src={typeof src === "string" ? resolveSrc(src, base) : src}
           alt={alt ?? ""}
           loading="lazy"
-          className="inline-block h-auto max-w-full align-middle"
+          className="rounded inline-block h-auto max-w-full align-middle"
         />
       ),
       source: ({ node, srcSet, ...props }) => (
@@ -150,19 +265,25 @@ export default memo(function MarkdownRenderer({
       h1: ({ node, ...props }) => (
         <h1
           {...props}
-          className="font-display text-heading mt-8 mb-4 first:mt-0"
+          className="font-display font-bold text-heading mt-8 mb-4 first:mt-0"
         />
       ),
       h2: ({ node, ...props }) => (
-        <h2 {...props} className="font-display text-xl mt-8 mb-3 first:mt-0" />
+        <h2
+          {...props}
+          className="font-display font-bold text-xl mt-8 mb-3 first:mt-0"
+        />
       ),
       h3: ({ node, ...props }) => (
-        <h3 {...props} className="font-display text-lg mt-6 mb-2 first:mt-0" />
+        <h3
+          {...props}
+          className="font-display font-bold text-lg mt-6 mb-2 first:mt-0"
+        />
       ),
       h4: ({ node, ...props }) => (
         <h4
           {...props}
-          className="font-display text-body mt-6 mb-2 first:mt-0"
+          className="font-display font-bold text-body mt-6 mb-2 first:mt-0"
         />
       ),
       p: ({ node, ...props }) => (
@@ -184,12 +305,40 @@ export default memo(function MarkdownRenderer({
         />
       ),
       li: ({ node, ...props }) => <li {...props} className="pl-1" />,
-      blockquote: ({ node, ...props }) => (
-        <blockquote
-          {...props}
-          className="text-muted my-4 border-l-2 border-text/20 pl-4 italic"
-        />
-      ),
+      blockquote: ({ node, children, ...props }) => {
+        const alertKey = findAlertKey(node);
+        const body = alertKey ? alertBody(children) : null;
+        if (alertKey && body) {
+          const {
+            label,
+            icon: Icon,
+            className,
+            titleClassName,
+          } = ALERT_TYPES[alertKey];
+          return (
+            <blockquote
+              {...props}
+              className={`my-4 rounded-r-xl border-l-4 px-4 py-3 not-italic ${className}`}
+            >
+              <p
+                className={`text-body m-0 mb-1.5 flex items-center gap-2 font-semibold ${titleClassName}`}
+              >
+                <Icon className="size-4 shrink-0" aria-hidden="true" />
+                {label}
+              </p>
+              {body}
+            </blockquote>
+          );
+        }
+        return (
+          <blockquote
+            {...props}
+            className="text-muted my-4 border-l-2 border-text/20 pl-4 italic"
+          >
+            {children}
+          </blockquote>
+        );
+      },
       code: ({ node, ...props }) => (
         <code
           {...props}
