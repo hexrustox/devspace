@@ -5,6 +5,11 @@
   inherits: true;
   initial-value: 0;
 }
+@property --blob-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
 @import "@fontsource-variable/space-grotesk";
 @import "@fontsource-variable/inter";
 

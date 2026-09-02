@@ -15,7 +15,7 @@ export default function Glass({
   return (
     <div
       {...props}
-      className={`inline-flex rounded-xl border border-text/15 bg-text/5 backdrop-blur-md transition-colors ${
+      className={`inline-flex rounded-xl border border-text/15 bg-text/5 backdrop-blur-sm transition-colors ${
         hover ? "hover:bg-text/20" : ""
       } has-focus-visible:outline-2 has-focus-visible:outline-text has-focus-visible:outline-offset-2 ${className}`}
     >

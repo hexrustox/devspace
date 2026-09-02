@@ -8,14 +8,26 @@ interface Props {
 }
 
 export default function SkillCard({
-  skill: { name, icon, blurb, url },
+  skill: { name, icon, blurb, url, colors },
 }: Props) {
   const [open, setOpen] = useState(false);
 
+  const setAuroraColors = (value: Skill["colors"] | null) => {
+    document.dispatchEvent(
+      new CustomEvent("aurora:colors", { detail: { colors: value } }),
+    );
+  };
+
   return (
     <Glass
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => {
+        setOpen(true);
+        setAuroraColors(colors);
+      }}
+      onMouseLeave={() => {
+        setOpen(false);
+        setAuroraColors(null);
+      }}
       className="aspect-square w-full"
     >
       <a

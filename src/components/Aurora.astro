@@ -10,12 +10,43 @@ const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
   class="fixed inset-0 -z-10 pointer-events-none overflow-hidden"
   aria-hidden="true"
 >
-  <div class="blob blob-top-left" style={`--blob-color: ${topLeft};`}></div>
-  <div class="blob blob-top-right" style={`--blob-color: ${topRight};`}></div>
-  <div class="blob blob-bottom-right" style={`--blob-color: ${bottomRight};`}>
+  <div class="blob blob-top-left" style={`--blob-color: var(--aurora-top-left, ${topLeft});`}></div>
+  <div
+    class="blob blob-top-right"
+    style={`--blob-color: var(--aurora-top-right, ${topRight});`}
+  ></div>
+  <div
+    class="blob blob-bottom-right"
+    style={`--blob-color: var(--aurora-bottom-right, ${bottomRight});`}
+  >
   </div>
-  <div class="blob blob-center" style={`--blob-color: ${center};`}></div>
+  <div
+    class="blob blob-center"
+    style={`--blob-color: var(--aurora-center, ${center});`}
+  ></div>
 </div>
+
+<script>
+  const vars = [
+    "--aurora-top-left",
+    "--aurora-top-right",
+    "--aurora-bottom-right",
+    "--aurora-center",
+  ] as const;
+
+  document.addEventListener("aurora:colors", (event) => {
+    const colors = (event as CustomEvent<{ colors?: string[] }>).detail?.colors;
+    if (colors) {
+      colors.forEach((color, i) => {
+        document.documentElement.style.setProperty(vars[i], color);
+      });
+    } else {
+      vars.forEach((name) => {
+        document.documentElement.style.removeProperty(name);
+      });
+    }
+  });
+</script>
 
 <style>
   .blob {
@@ -23,6 +54,7 @@ const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
     border-radius: 50%;
     filter: blur(2px);
     will-change: transform;
+    transition: --blob-color 300ms ease;
     background: radial-gradient(circle, var(--blob-color), transparent 70%);
   }
 
@@ -90,6 +122,7 @@ const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
   @media (prefers-reduced-motion: reduce) {
     .blob {
       animation: none;
+      transition: none;
     }
   }
 </style>
