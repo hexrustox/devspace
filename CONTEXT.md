@@ -35,3 +35,7 @@ _Avoid_: colophon, bottom bar
 **Aurora**:
 The animated colored background layer fixed behind the whole page.
 _Avoid_: glow, gradient background
+
+**Lightbox**:
+The fullscreen overlay showing a single Project README image enlarged over a dimmed black backdrop.
+_Avoid_: fullscreen viewer, image modal, zoom

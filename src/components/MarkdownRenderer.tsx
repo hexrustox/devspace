@@ -13,6 +13,7 @@ import {
 import {
   Info,
   Lightbulb,
+  Maximize2,
   MessageSquareWarning,
   OctagonAlert,
   TriangleAlert,
@@ -21,6 +22,7 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
+import Lightbox from "./Lightbox";
 
 const resolveSrc = (src: string, base: string) => {
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(src) || src.startsWith("//")) {
@@ -226,6 +228,11 @@ export default memo(function MarkdownRenderer({
   markdown,
   base,
 }: RendererProps) {
+  const [viewing, setViewing] = useState<{
+    src: string;
+    alt: string;
+  } | null>(null);
+
   const components: Components = useMemo(
     () => ({
       a: ({ node, children, ...props }) => (
@@ -233,15 +240,35 @@ export default memo(function MarkdownRenderer({
           {children}
         </a>
       ),
-      img: ({ node, alt, src, ...props }) => (
-        <img
-          {...props}
-          src={typeof src === "string" ? resolveSrc(src, base) : src}
-          alt={alt ?? ""}
-          loading="lazy"
-          className="rounded inline-block h-auto max-w-full align-middle"
-        />
-      ),
+      img: ({ node, alt, src, ...props }) => {
+        const resolved = typeof src === "string" ? resolveSrc(src, base) : null;
+        const canFullscreen = resolved !== null && /\.(png|jpg)$/i.test(resolved);
+        return (
+          <span className="group relative w-fit">
+            <img
+              {...props}
+              src={resolved ?? src}
+              alt={alt ?? ""}
+              loading="lazy"
+              className="rounded-lg inline-block h-auto max-w-full align-middle"
+            />
+            {canFullscreen ? (
+              <button
+                type="button"
+                aria-label="View fullscreen"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setViewing({ src: resolved, alt: alt ?? "" });
+                }}
+                className="pointer-coarse:opacity-100 absolute mt-2 right-2 cursor-pointer rounded border border-text/25 bg-base/60 p-1.5 text-text opacity-0 transition-opacity focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text group-hover:opacity-100"
+              >
+                <Maximize2 className="size-4" aria-hidden="true" />
+              </button>
+            ) : null}
+          </span>
+        );
+      },
       source: ({ node, srcSet, ...props }) => (
         <source
           {...props}
@@ -386,12 +413,21 @@ export default memo(function MarkdownRenderer({
   );
 
   return (
-    <ReactMarkdown
-      remarkPlugins={remarkPlugins}
-      rehypePlugins={rehypePlugins}
-      components={components}
-    >
-      {markdown}
-    </ReactMarkdown>
+    <>
+      <ReactMarkdown
+        remarkPlugins={remarkPlugins}
+        rehypePlugins={rehypePlugins}
+        components={components}
+      >
+        {markdown}
+      </ReactMarkdown>
+      {viewing ? (
+        <Lightbox
+          src={viewing.src}
+          alt={viewing.alt}
+          onClose={() => setViewing(null)}
+        />
+      ) : null}
+    </>
   );
 });

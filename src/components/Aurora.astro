@@ -7,14 +7,19 @@ const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
 ---
 
 <div
-  class="fixed inset-0 -z-10 pointer-events-none overflow-hidden"
+  class="fixed inset-0 pointer-events-none overflow-hidden"
   aria-hidden="true"
 >
-  <div class="blob blob-top-left" style={`--blob-color: var(--aurora-top-left, ${topLeft});`}></div>
+  <div
+    class="blob blob-top-left"
+    style={`--blob-color: var(--aurora-top-left, ${topLeft});`}
+  >
+  </div>
   <div
     class="blob blob-top-right"
     style={`--blob-color: var(--aurora-top-right, ${topRight});`}
-  ></div>
+  >
+  </div>
   <div
     class="blob blob-bottom-right"
     style={`--blob-color: var(--aurora-bottom-right, ${bottomRight});`}
@@ -23,7 +28,8 @@ const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
   <div
     class="blob blob-center"
     style={`--blob-color: var(--aurora-center, ${center});`}
-  ></div>
+  >
+  </div>
 </div>
 
 <script>
