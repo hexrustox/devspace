@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function SkillCard({
-  skill: { name, icon, blurb, url, colors },
+  skill: { name, icon, blurb, colors },
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -30,12 +30,7 @@ export default function SkillCard({
       }}
       className="aspect-square w-full"
     >
-      <a
-        href={url ?? undefined}
-        className="p-4 aspect-square flex flex-col items-center justify-center text-center outline-none"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <div className="p-4 aspect-square flex flex-col items-center justify-center text-center outline-none">
         <i className={`${icon} text-text text-4xl`}></i>
         <span className="mt-2 font-display text-body font-bold">{name}</span>
         <AnimatePresence initial={false}>
@@ -51,7 +46,7 @@ export default function SkillCard({
             </motion.span>
           )}
         </AnimatePresence>
-      </a>
+      </div>
     </Glass>
   );
 }
