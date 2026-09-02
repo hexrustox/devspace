@@ -1,0 +1,95 @@
+---
+interface Props {
+  colors: [string, string, string, string];
+}
+
+const [topLeft, topRight, bottomRight, center] = Astro.props.colors;
+---
+
+<div
+  class="fixed inset-0 -z-10 pointer-events-none overflow-hidden"
+  aria-hidden="true"
+>
+  <div class="blob blob-top-left" style={`--blob-color: ${topLeft};`}></div>
+  <div class="blob blob-top-right" style={`--blob-color: ${topRight};`}></div>
+  <div class="blob blob-bottom-right" style={`--blob-color: ${bottomRight};`}>
+  </div>
+  <div class="blob blob-center" style={`--blob-color: ${center};`}></div>
+</div>
+
+<style>
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(2px);
+    will-change: transform;
+    background: radial-gradient(circle, var(--blob-color), transparent 70%);
+  }
+
+  .blob-top-left {
+    width: 80rem;
+    height: 80rem;
+    top: -30rem;
+    left: -20rem;
+    opacity: 0.22;
+    animation: aurora-top-left 28s ease-in-out infinite alternate;
+  }
+
+  .blob-top-right {
+    width: 68rem;
+    height: 68rem;
+    top: -24rem;
+    right: -20rem;
+    opacity: 0.18;
+    animation: aurora-top-right 24s ease-in-out infinite alternate;
+  }
+
+  .blob-bottom-right {
+    width: 60rem;
+    height: 60rem;
+    bottom: -24rem;
+    right: -16rem;
+    opacity: 0.16;
+    animation: aurora-bottom-right 32s ease-in-out infinite alternate;
+  }
+
+  .blob-center {
+    width: 90rem;
+    height: 90rem;
+    top: 30%;
+    left: 50%;
+    margin-left: -45rem;
+    opacity: 0.25;
+    animation: aurora-center 36s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora-top-left {
+    to {
+      transform: translate(8rem, 4rem) scale(1.15);
+    }
+  }
+
+  @keyframes aurora-top-right {
+    to {
+      transform: translate(-10rem, 6rem) scale(0.9);
+    }
+  }
+
+  @keyframes aurora-bottom-right {
+    to {
+      transform: translate(-6rem, -5rem) scale(1.1);
+    }
+  }
+
+  @keyframes aurora-center {
+    to {
+      transform: translate(4rem, -3rem) scale(1.08);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob {
+      animation: none;
+    }
+  }
+</style>

@@ -27,3 +27,11 @@ _Avoid_: repo, work
 **Contact**:
 The Content Source section closing the page: a heading, a blurb, an availability note, and links to reach the site owner (email, GitHub, GitLab).
 _Avoid_: socials, links
+
+**Footer**:
+The closing line at the bottom of the page showing the copyright year.
+_Avoid_: colophon, bottom bar
+
+**Aurora**:
+The animated colored background layer fixed behind the whole page.
+_Avoid_: glow, gradient background

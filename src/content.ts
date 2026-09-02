@@ -136,3 +136,5 @@ export const contactHeading = "Say hello.";
 export const contactBlurb =
   "The fastest way to reach me is email — I'm also on GitHub and GitLab.";
 export const contactAvailability = "Open to work";
+
+export const footerNote = "© 2026";

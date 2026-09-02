@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import "devicon/devicon.min.css";
+import Aurora from "../components/Aurora.astro";
 
 interface Props {
   title?: string;
@@ -20,6 +21,14 @@ const { title = "", description = "" } = Astro.props;
     <meta name="description" content={description} />
   </head>
   <body class="bg-base font-body text-text antialiased">
+    <Aurora
+      colors={[
+        "var(--color-blue)",
+        "var(--color-purple)",
+        "var(--color-green)",
+        "var(--color-blue-deep)",
+      ]}
+    />
     <slot />
   </body>
 </html>
