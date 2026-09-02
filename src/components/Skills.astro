@@ -10,7 +10,7 @@ import Section from "./Section.astro";
   >
     {
       skills.map((skill) => (
-        <li class="transition-opacity duration-300">
+        <li class="transition-opacity">
           <SkillCard client:visible skill={skill} />
         </li>
       ))

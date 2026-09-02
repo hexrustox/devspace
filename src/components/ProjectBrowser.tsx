@@ -245,7 +245,7 @@ export default function ProjectBrowser({
               aria-controls={`${uid}-panel`}
               tabIndex={i === selected ? 0 : -1}
               onClick={() => select(i)}
-              className={`px-4 py-2 font-display font-bold duration-300 focus-visible:outline-none ${
+              className={`px-4 py-2 font-display font-bold transition-colors focus-visible:outline-none ${
                 i === selected
                   ? "text-text"
                   : "text-muted hover:text-text cursor-pointer"
@@ -302,7 +302,7 @@ export default function ProjectBrowser({
             aria-labelledby={`${uid}-tab-${selected}`}
             className={`absolute inset-0 ${
               phase.kind === "raw" ? "invisible" : "visible"
-            } ${reduced ? "transition-opacity duration-200" : ""}`}
+            } ${reduced ? "transition-opacity" : ""}`}
             style={{
               clipPath: "inset(0 calc((1 - var(--wipe)) * 100%) 0 0)",
               opacity:
@@ -329,7 +329,7 @@ export default function ProjectBrowser({
           {!reduced && (
             <div
               aria-hidden
-              className={`pointer-events-none absolute inset-y-0 w-px bg-text transition-opacity duration-150 ${
+              className={`pointer-events-none absolute inset-y-0 w-px bg-text transition-opacity ${
                 sweeping ? "opacity-100" : "opacity-0"
               }`}
               style={{

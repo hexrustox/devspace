@@ -27,4 +27,6 @@
   --text-body--line-height: 1.6;
   --text-caption: 0.8125rem;
   --text-caption--line-height: 1.4;
+
+  --default-transition-duration: 300ms;
 }
