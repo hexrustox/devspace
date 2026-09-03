@@ -25,16 +25,16 @@ export const skills: Skill[] = [
     colors: ["#b3ecff", "#61dafb", "#2aa8c7", "#135a6e"],
   },
   {
-    name: "Rust",
-    icon: "devicon-rust-plain",
-    blurb: "Systems language focused on safety and performance",
-    colors: ["#ffb08f", "#ce422b", "#93301d", "#4a180e"],
+    name: "Angular",
+    icon: "devicon-angular-plain",
+    blurb: "Full-featured framework for large-scale single-page applications",
+    colors: ["#ff8fa8", "#dd0031", "#99001f", "#4d0010"],
   },
   {
-    name: "Nix",
-    icon: "devicon-nixos-plain",
-    blurb: "Declarative package manager for reproducible environments",
-    colors: ["#a9cde8", "#7eb6e6", "#5277c3", "#2c4a75"],
+    name: "Vue",
+    icon: "devicon-vuejs-plain",
+    blurb: "Progressive framework for building user interfaces",
+    colors: ["#a5f0cf", "#42b883", "#2c8a61", "#175a41"],
   },
   {
     name: "Python",
@@ -49,28 +49,22 @@ export const skills: Skill[] = [
     colors: ["#a48af0", "#512bd4", "#38209c", "#1f1259"],
   },
   {
-    name: "Angular",
-    icon: "devicon-angular-plain",
-    blurb: "Full-featured framework for large-scale single-page applications",
-    colors: ["#ff8fa8", "#dd0031", "#99001f", "#4d0010"],
+    name: "Rust",
+    icon: "devicon-rust-plain",
+    blurb: "Systems language focused on safety and performance",
+    colors: ["#ffb08f", "#ce422b", "#93301d", "#4a180e"],
   },
   {
-    name: "Vue",
-    icon: "devicon-vuejs-plain",
-    blurb: "Progressive framework for building user interfaces",
-    colors: ["#a5f0cf", "#42b883", "#2c8a61", "#175a41"],
+    name: "Nix",
+    icon: "devicon-nixos-plain",
+    blurb: "Declarative package manager for reproducible environments",
+    colors: ["#a9cde8", "#7eb6e6", "#5277c3", "#2c4a75"],
   },
   {
     name: "PowerShell",
     icon: "devicon-powershell-plain",
     blurb: "Cross-platform shell and scripting language for automation",
     colors: ["#a9c9ff", "#5391fe", "#2b5fb8", "#122c5c"],
-  },
-  {
-    name: "PostgreSQL",
-    icon: "devicon-postgresql-plain",
-    blurb: "Advanced open-source relational database",
-    colors: ["#8fb6d9", "#336791", "#24496b", "#122a40"],
   },
   {
     name: "Azure",
@@ -96,6 +90,12 @@ export const skills: Skill[] = [
     blurb: "Automation tool for configuration management and provisioning",
     colors: ["#ff9d9d", "#ee0000", "#a80000", "#540000"],
   },
+  {
+    name: "PostgreSQL",
+    icon: "devicon-postgresql-plain",
+    blurb: "Advanced open-source relational database",
+    colors: ["#8fb6d9", "#336791", "#24496b", "#122a40"],
+  },
 ];
 
 export type Project = {
@@ -110,14 +110,14 @@ export const projects: Project[] = [
       "https://raw.githubusercontent.com/hexrustox/octadash/refs/heads/main/README.md",
   },
   {
-    name: "Nix Capsule",
-    readmeUrl:
-      "https://raw.githubusercontent.com/hexrustox/nix-capsule/refs/heads/main/README.md",
-  },
-  {
     name: "Dotrift",
     readmeUrl:
       "https://raw.githubusercontent.com/hexrustox/dotrift/refs/heads/main/README.md",
+  },
+  {
+    name: "Nix Capsule",
+    readmeUrl:
+      "https://raw.githubusercontent.com/hexrustox/nix-capsule/refs/heads/main/README.md",
   },
 ];
 
