@@ -5,9 +5,10 @@ import Skills from "../components/Skills.astro";
 import Projects from "../components/Projects.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
+import { site } from "../content";
 ---
 
-<Base>
+<Base title={site.title} description={site.description}>
   <main class="relative">
     <Hero client:load />
     <Skills />

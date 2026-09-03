@@ -1,7 +1,14 @@
 ---
 import pkg from "../../package.json" with { type: "json" };
+
+const year = new Date().getFullYear();
 ---
 
 <footer class="px-6 pb-10 text-center">
-  <p class="text-caption text-muted">© 2026 · v{pkg.version}</p>
+  <p class="text-caption text-muted">© <span id="footer-year">{year}</span> · v{pkg.version}</p>
 </footer>
+
+<script is:inline>
+  const el = document.getElementById("footer-year");
+  if (el) el.textContent = String(new Date().getFullYear());
+</script>

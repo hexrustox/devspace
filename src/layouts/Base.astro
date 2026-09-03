@@ -3,13 +3,20 @@ import "../styles/global.css";
 import "devicon/devicon.min.css";
 import Aurora from "../components/Aurora.astro";
 import Lenis from "../components/Lenis.astro";
+import SeoJsonLd from "../components/SeoJsonLd.astro";
+import { site } from "../content";
 
 interface Props {
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonical?: string;
+  noindex?: boolean;
 }
 
-const { title = "Devspace", description = "" } = Astro.props;
+const { title, description, ogImage, canonical, noindex = false } = Astro.props;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -20,6 +27,22 @@ const { title = "Devspace", description = "" } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta
+      name="robots"
+      content={noindex ? "noindex, nofollow" : "index, follow"}
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content={site.themeColor} />
+    <SeoJsonLd />
   </head>
   <body class="bg-base font-body text-text antialiased">
     <Aurora

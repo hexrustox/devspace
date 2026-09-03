@@ -1,3 +1,12 @@
+export const site = {
+  url: "https://ckhgy.com",
+  title: "Devspace",
+  description:
+    "I focused on building reliable Linux CLI tools, with a generalist approach to solving technical problems and creating practical software.",
+  author: "hexrustox",
+  themeColor: "#0a0a0b",
+} as const;
+
 export type Skill = {
   name: string;
   icon: string;
@@ -127,7 +136,7 @@ export type ContactLink = {
 };
 
 export const contactLinks: ContactLink[] = [
-  { label: "Email", url: "mailto:hello@example.com" },
+  { label: "Email", url: "mailto:career.chy982@outlook.com" },
   { label: "GitHub", url: "https://github.com/hexrustox" },
   { label: "GitLab", url: "https://gitlab.com/codnixus" },
 ];

@@ -1,0 +1,39 @@
+---
+import { contactLinks, site, skills } from "../content";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const sameAs = contactLinks
+  .map((l) => l.url)
+  .filter((u) => u.startsWith("https://"));
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: site.author,
+    url: site.url,
+    description: site.description,
+    sameAs,
+    knowsAbout: skills.map((s) => s.name),
+  },
+  about: {
+    "@type": "Person",
+    name: site.author,
+    url: site.url,
+  },
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebSite",
+    name: site.title,
+    url: site.url,
+  },
+};
+---
+
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(structuredData)}
+/>

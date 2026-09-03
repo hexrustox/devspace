@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Glass from "./Glass";
 import { motion, useMotionValue, useTransform } from "motion/react";
+import { site } from "../content";
 
 const ctas = [
   { label: "View projects", href: "#projects" },
@@ -52,10 +53,7 @@ export default function Hero() {
           Hello, I am a<br />
           Software Engineer
         </h1>
-        <p className="text-body text-muted mt-6 max-w-xl">
-          I turn ambiguous problems into shipped software. TypeScript-first,
-          design-minded, allergic to accidental complexity.
-        </p>
+        <p className="text-body text-muted mt-6 max-w-xl">{site.description}</p>
         <div className="mt-8 flex gap-4">
           {ctas.map((cta) => (
             <Glass key={cta.href}>
