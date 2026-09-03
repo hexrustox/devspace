@@ -2,13 +2,46 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-interface LightboxProps {
-  src: string;
-  alt: string;
+type Props = ({ src: string; alt?: string } | { svg: string }) & {
   onClose: () => void;
+};
+
+function DiagramContent({ svg }: { svg: string }) {
+  const viewBox = svg.match(/viewBox="[-\d.]+ [-\d.]+ ([\d.]+) ([\d.]+)"/);
+  const ratio = viewBox ? Number(viewBox[1]) / Number(viewBox[2]) : null;
+  const widthCapped =
+    ratio !== null &&
+    ratio > window.innerWidth / window.innerHeight &&
+    window.innerWidth * 0.8 > 1024;
+  return (
+    <div
+      className="max-w-full rounded-xl border border-text/10 bg-base p-4 [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-h-[80vh] [&_svg]:max-w-full!"
+      style={
+        ratio
+          ? {
+              width: widthCapped
+                ? "80vw"
+                : `min(100%, calc(80vh * ${ratio}))`,
+            }
+          : undefined
+      }
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
 }
 
-export default function Lightbox({ src, alt, onClose }: LightboxProps) {
+function ImageContent({ src, alt }: { src: string; alt?: string }) {
+  return (
+    <img
+      src={src}
+      alt={alt ?? ""}
+      className="max-h-[80vh] max-w-full min-[1281px]:max-w-[80vw] rounded-xl object-contain"
+    />
+  );
+}
+
+export default function Lightbox(props: Props) {
+  const { onClose } = props;
   const [shown, setShown] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -41,7 +74,9 @@ export default function Lightbox({ src, alt, onClose }: LightboxProps) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={alt || "Fullscreen image"}
+      aria-label={
+        "svg" in props ? "Fullscreen diagram" : props.alt || "Fullscreen image"
+      }
       onClick={onClose}
       className={`fixed inset-0 flex items-center justify-center bg-black/75 p-6 transition-opacity duration-150 motion-reduce:transition-none backdrop-blur-xs ${
         shown ? "opacity-100" : "opacity-0"
@@ -49,19 +84,17 @@ export default function Lightbox({ src, alt, onClose }: LightboxProps) {
     >
       <figure
         onClick={(event) => event.stopPropagation()}
-        className={`flex max-h-full max-w-full flex-col items-center gap-4 transition-transform duration-150 motion-reduce:transition-none ${
+        className={`flex w-full max-h-full max-w-full flex-col items-center gap-4 transition-transform duration-150 motion-reduce:transition-none ${
           shown ? "scale-100" : "scale-95"
         }`}
       >
-        <img
-          src={src}
-          alt={alt}
-          className="max-h-[85vh] max-w-full rounded-xl object-contain"
-        />
-        {alt ? (
-          <figcaption className="max-w-full text-caption text-muted">
-            {alt}
-          </figcaption>
+        {"svg" in props ? (
+          <DiagramContent svg={props.svg} />
+        ) : (
+          <ImageContent src={props.src} alt={props.alt} />
+        )}
+        {"src" in props && props.alt ? (
+          <figcaption className="max-w-full">{props.alt}</figcaption>
         ) : null}
       </figure>
       <button

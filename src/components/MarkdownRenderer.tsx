@@ -156,7 +156,13 @@ const alertBody = (children: ReactNode): ReactNode[] | null => {
   ];
 };
 
-function Mermaid({ chart }: { chart: string }) {
+function Mermaid({
+  chart,
+  onFullscreen,
+}: {
+  chart: string;
+  onFullscreen?: (svg: string) => void;
+}) {
   const [svg, setSvg] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -212,26 +218,36 @@ function Mermaid({ chart }: { chart: string }) {
     );
   }
   return (
-    <div
-      className="[&_svg]:mx-auto my-4 overflow-x-auto rounded-xl border border-text/10 bg-base p-4"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div className="group relative my-4">
+      <div
+        className="[&_svg]:mx-auto overflow-x-auto rounded-xl border border-text/10 bg-base p-4"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+      {onFullscreen ? (
+        <button
+          type="button"
+          aria-label="View fullscreen"
+          onClick={() => onFullscreen(svg)}
+          className="pointer-coarse:opacity-100 absolute top-2 right-2 cursor-pointer rounded border border-text/25 bg-base/60 p-1.5 text-text opacity-0 transition-opacity focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text group-hover:opacity-100"
+        >
+          <Maximize2 className="size-4" aria-hidden="true" />
+        </button>
+      ) : null}
+    </div>
   );
 }
 
-interface RendererProps {
+type Viewing =
+  | { kind: "image"; src: string; alt: string }
+  | { kind: "diagram"; svg: string };
+
+interface Props {
   markdown: string;
   base: string;
 }
 
-export default memo(function MarkdownRenderer({
-  markdown,
-  base,
-}: RendererProps) {
-  const [viewing, setViewing] = useState<{
-    src: string;
-    alt: string;
-  } | null>(null);
+export default memo(function MarkdownRenderer({ markdown, base }: Props) {
+  const [viewing, setViewing] = useState<Viewing | null>(null);
 
   const components: Components = useMemo(
     () => ({
@@ -242,7 +258,8 @@ export default memo(function MarkdownRenderer({
       ),
       img: ({ node, alt, src, ...props }) => {
         const resolved = typeof src === "string" ? resolveSrc(src, base) : null;
-        const canFullscreen = resolved !== null && /\.(png|jpg)$/i.test(resolved);
+        const canFullscreen =
+          resolved !== null && /\.(png|jpg)$/i.test(resolved);
         return (
           <span className="group relative w-fit">
             <img
@@ -259,7 +276,7 @@ export default memo(function MarkdownRenderer({
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
-                  setViewing({ src: resolved, alt: alt ?? "" });
+                  setViewing({ kind: "image", src: resolved, alt: alt ?? "" });
                 }}
                 className="pointer-coarse:opacity-100 absolute mt-2 right-2 cursor-pointer rounded border border-text/25 bg-base/60 p-1.5 text-text opacity-0 transition-opacity focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text group-hover:opacity-100"
               >
@@ -380,7 +397,10 @@ export default memo(function MarkdownRenderer({
           /language-mermaid/.test(child.props.className ?? "")
         ) {
           return (
-            <Mermaid chart={String(child.props.children).replace(/\n$/, "")} />
+            <Mermaid
+              chart={String(child.props.children).replace(/\n$/, "")}
+              onFullscreen={(svg) => setViewing({ kind: "diagram", svg })}
+            />
           );
         }
         return (
@@ -422,11 +442,15 @@ export default memo(function MarkdownRenderer({
         {markdown}
       </ReactMarkdown>
       {viewing ? (
-        <Lightbox
-          src={viewing.src}
-          alt={viewing.alt}
-          onClose={() => setViewing(null)}
-        />
+        viewing.kind === "image" ? (
+          <Lightbox
+            src={viewing.src}
+            alt={viewing.alt}
+            onClose={() => setViewing(null)}
+          />
+        ) : (
+          <Lightbox svg={viewing.svg} onClose={() => setViewing(null)} />
+        )
       ) : null}
     </>
   );
