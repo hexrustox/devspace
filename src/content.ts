@@ -119,7 +119,7 @@ export const projects: Project[] = [
       "https://raw.githubusercontent.com/hexrustox/octadash/refs/heads/main/README.md",
   },
   {
-    name: "OctaDash",
+    name: "Devspace",
     readmeUrl:
       "https://raw.githubusercontent.com/hexrustox/devspace/refs/heads/main/README.md",
   },

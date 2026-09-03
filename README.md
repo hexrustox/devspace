@@ -16,9 +16,6 @@ This repository holds my personal portfolio: a single web page that tells a visi
 
 The site is live at [ckhgy.com](https://ckhgy.com).
 
-> [!TIP]
-> Every word on the site — the intro, the skill descriptions, the project list, the contact links — lives in one content file (`src/content.ts`). Keeping the site up to date means editing that single file, never the page itself.
-
 ## What a visitor sees
 
 The page reads top to bottom like a short introduction:
