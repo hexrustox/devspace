@@ -1,6 +1,9 @@
 import {
+  lazy,
+  Suspense,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -8,7 +11,8 @@ import {
 } from "react";
 import type { Project } from "../content";
 import Glass from "./Glass";
-import MarkdownRenderer from "./MarkdownRenderer";
+
+const MarkdownRenderer = lazy(() => import("./MarkdownRenderer"));
 
 type ReadmeState =
   | { status: "loading" }
@@ -28,6 +32,8 @@ const SWEEP_EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
 const rawBase = (readmeUrl: string) => readmeUrl.replace(/[^/]*$/, "");
 
 const FENCE = /^\s*(```|~~~)/;
+const HEADING_RE = /^#{1,6}\s/;
+const BLOCKQUOTE_RE = /^>/;
 
 function RawSource({ markdown }: { markdown: string }) {
   let inFence = false;
@@ -40,9 +46,9 @@ function RawSource({ markdown }: { markdown: string }) {
         const cls =
           isEdge || wasFence
             ? "text-muted/70"
-            : /^#{1,6}\s/.test(line)
+            : HEADING_RE.test(line)
               ? "text-text font-medium"
-              : /^>/.test(line)
+              : BLOCKQUOTE_RE.test(line)
                 ? "text-muted italic"
                 : "text-muted";
         return (
@@ -83,6 +89,10 @@ export default function ProjectBrowser({
   const project = projects[selected];
   const sweeping = phase.kind === "sweep";
   const sweepMs = reduced ? SWEEP_MS_REDUCED : SWEEP_MS;
+  const phaseKind = phase.kind;
+  const phaseDir = phase.kind === "sweep" ? phase.dir : null;
+  const stateStatus = state.status;
+  const stateMarkdown = state.status === "ready" ? state.markdown : null;
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -133,35 +143,43 @@ export default function ProjectBrowser({
   }, [project, attempt]);
 
   useEffect(() => {
-    for (const p of projects) {
-      if (cache.current.has(p.readmeUrl)) continue;
-      fetch(p.readmeUrl)
+    const controllers: AbortController[] = [];
+    const toPrefetch = projects.filter(
+      (p) => !cache.current.has(p.readmeUrl) && p.readmeUrl !== project?.readmeUrl,
+    );
+    for (const p of toPrefetch) {
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(p.readmeUrl, { signal: controller.signal })
         .then((res) => (res.ok ? res.text() : ""))
         .then((markdown) => {
           if (markdown) cache.current.set(p.readmeUrl, markdown);
         })
         .catch(() => {});
     }
-  }, [projects]);
+    return () => {
+      for (const c of controllers) c.abort();
+    };
+  }, [projects, project?.readmeUrl]);
 
   useEffect(() => {
-    if (!seen || !project || phase.kind !== "raw" || state.status !== "ready")
+    if (!seen || !project || phaseKind !== "raw" || stateStatus !== "ready")
       return;
-    setPanelContent({ url: project.readmeUrl, markdown: state.markdown });
+    setPanelContent({ url: project.readmeUrl, markdown: stateMarkdown! });
     const t = setTimeout(() => {
       setPhase({ kind: "sweep", dir: "forward" });
       setWipe(1);
     }, RAW_HOLD);
     return () => clearTimeout(t);
-  }, [seen, phase, selected, attempt, state, project]);
+  }, [seen, phaseKind, selected, attempt, stateStatus, stateMarkdown, project?.readmeUrl]);
 
   useEffect(() => {
-    if (phase.kind !== "sweep") return;
+    if (phaseKind !== "sweep") return;
     const t = setTimeout(() => {
-      setPhase(phase.dir === "forward" ? { kind: "read" } : { kind: "raw" });
+      setPhase(phaseDir === "forward" ? { kind: "read" } : { kind: "raw" });
     }, sweepMs);
     return () => clearTimeout(t);
-  }, [phase, sweepMs]);
+  }, [phaseKind, phaseDir, sweepMs]);
 
   useEffect(() => {
     rawRef.current?.scrollTo({ top: 0 });
@@ -219,10 +237,14 @@ export default function ProjectBrowser({
     return <p className="text-caption text-muted">No projects yet.</p>;
   }
 
-  const sheetStyle = {
-    "--wipe": wipe,
-    transition: reduced ? undefined : `--wipe ${SWEEP_MS}ms ${SWEEP_EASING}`,
-  } as CSSProperties;
+  const sheetStyle = useMemo(
+    () =>
+      ({
+        "--wipe": wipe,
+        transition: reduced ? undefined : `--wipe ${SWEEP_MS}ms ${SWEEP_EASING}`,
+      }) as CSSProperties,
+    [wipe, reduced],
+  );
 
   return (
     <>
@@ -320,10 +342,18 @@ export default function ProjectBrowser({
               className="scrollbar-subtle h-full overflow-y-auto px-6 py-6 scrollbar-gutter-stable md:px-10 md:py-8"
             >
               {panelContent ? (
-                <MarkdownRenderer
-                  markdown={panelContent.markdown}
-                  base={rawBase(panelContent.url)}
-                />
+                <Suspense
+                  fallback={
+                    <p className="text-caption text-muted animate-pulse">
+                      Rendering&hellip;
+                    </p>
+                  }
+                >
+                  <MarkdownRenderer
+                    markdown={panelContent.markdown}
+                    base={rawBase(panelContent.url)}
+                  />
+                </Suspense>
               ) : null}
             </div>
           </div>

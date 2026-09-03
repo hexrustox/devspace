@@ -3,6 +3,7 @@ import {
   cloneElement,
   isValidElement,
   memo,
+  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -48,6 +49,9 @@ const resolveSrcSet = (value: string, base: string) =>
 
 const remarkPlugins = [remarkGfm];
 const rehypePlugins = [rehypeRaw, rehypeSanitize];
+
+const FULLSCREEN_IMAGE_RE = /\.(png|jpg)$/i;
+const MERMAID_LANG_RE = /language-mermaid/;
 
 const cssVar = (name: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -248,6 +252,7 @@ interface Props {
 
 export default memo(function MarkdownRenderer({ markdown, base }: Props) {
   const [viewing, setViewing] = useState<Viewing | null>(null);
+  const handleClose = useCallback(() => setViewing(null), []);
 
   const components: Components = useMemo(
     () => ({
@@ -259,7 +264,7 @@ export default memo(function MarkdownRenderer({ markdown, base }: Props) {
       img: ({ node, alt, src, ...props }) => {
         const resolved = typeof src === "string" ? resolveSrc(src, base) : null;
         const canFullscreen =
-          resolved !== null && /\.(png|jpg)$/i.test(resolved);
+          resolved !== null && FULLSCREEN_IMAGE_RE.test(resolved);
         return (
           <span className="group relative w-fit">
             <img
@@ -394,7 +399,7 @@ export default memo(function MarkdownRenderer({ markdown, base }: Props) {
         const child = Array.isArray(children) ? children[0] : children;
         if (
           isValidElement<{ className?: string; children?: ReactNode }>(child) &&
-          /language-mermaid/.test(child.props.className ?? "")
+          MERMAID_LANG_RE.test(child.props.className ?? "")
         ) {
           return (
             <Mermaid
@@ -446,10 +451,10 @@ export default memo(function MarkdownRenderer({ markdown, base }: Props) {
           <Lightbox
             src={viewing.src}
             alt={viewing.alt}
-            onClose={() => setViewing(null)}
+            onClose={handleClose}
           />
         ) : (
-          <Lightbox svg={viewing.svg} onClose={() => setViewing(null)} />
+          <Lightbox svg={viewing.svg} onClose={handleClose} />
         )
       ) : null}
     </>
