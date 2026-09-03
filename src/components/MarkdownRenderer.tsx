@@ -17,6 +17,7 @@ import {
   Maximize2,
   MessageSquareWarning,
   OctagonAlert,
+  SquareArrowOutUpRight,
   TriangleAlert,
 } from "lucide-react";
 import ReactMarkdown, { type Components } from "react-markdown";
@@ -123,6 +124,40 @@ const isEmptyLead = (child: ReactNode) =>
   typeof child === "string"
     ? child.trim() === ""
     : isValidElement(child) && child.type === "br";
+
+const isImageHastLink = (node: unknown): boolean => {
+  const kids = (node as HastNode | undefined)?.children ?? [];
+  const elements = kids.filter((c) => c.type === "element");
+  if (elements.length === 0) return false;
+  return elements.every(
+    (c) => c.tagName === "img" || c.tagName === "picture" || c.tagName === "source",
+  );
+};
+
+const hasOnlyImages = (children: ReactNode): boolean => {
+  const arr = Children.toArray(children).filter(
+    (c) => !(typeof c === "string" && c.trim() === ""),
+  );
+  if (arr.length === 0) return false;
+  return arr.every((c) => {
+    if (!isValidElement(c)) return false;
+    const props = c.props as { src?: unknown; children?: unknown };
+    if (typeof props.src === "string") return true;
+    if ((c.type as unknown as string) === "img") return true;
+    // custom img component renders <span><img .../></span>
+    const inner = props.children as ReactNode;
+    if (inner) {
+      const innerArr = Children.toArray(inner);
+      return innerArr.some(
+        (ic) =>
+          isValidElement(ic) &&
+          ((ic.type as unknown as string) === "img" ||
+            typeof (ic.props as { src?: unknown })?.src === "string"),
+      );
+    }
+    return false;
+  });
+};
 
 const alertBody = (children: ReactNode): ReactNode[] | null => {
   const items = Children.toArray(children);
@@ -256,11 +291,35 @@ export default memo(function MarkdownRenderer({ markdown, base }: Props) {
 
   const components: Components = useMemo(
     () => ({
-      a: ({ node, children, ...props }) => (
-        <a {...props} target="_blank" rel="noopener noreferrer">
-          {children}
-        </a>
-      ),
+      a: ({ node, children, ...props }) => {
+        const imageOnly = isImageHastLink(node) || hasOnlyImages(children);
+        if (imageOnly) {
+          return (
+            <a {...props} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          );
+        }
+        return (
+          <a
+            {...props}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={[
+              "underline text-blue underline-offset-4 inline-flex items-center gap-1 align-baseline transition-opacity hover:opacity-70",
+              props.className,
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            {children}
+            <SquareArrowOutUpRight
+              className="size-3.5 shrink-0"
+              aria-hidden="true"
+            />
+          </a>
+        );
+      },
       img: ({ node, alt, src, ...props }) => {
         const resolved = typeof src === "string" ? resolveSrc(src, base) : null;
         const canFullscreen =
@@ -448,11 +507,7 @@ export default memo(function MarkdownRenderer({ markdown, base }: Props) {
       </ReactMarkdown>
       {viewing ? (
         viewing.kind === "image" ? (
-          <Lightbox
-            src={viewing.src}
-            alt={viewing.alt}
-            onClose={handleClose}
-          />
+          <Lightbox src={viewing.src} alt={viewing.alt} onClose={handleClose} />
         ) : (
           <Lightbox svg={viewing.svg} onClose={handleClose} />
         )
