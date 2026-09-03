@@ -266,6 +266,7 @@ export default function ProjectBrowser({
         >
           <div
             ref={rawRef}
+            data-lenis-prevent
             aria-hidden={state.status !== "error"}
             className={`scrollbar-subtle absolute inset-0 o px-6 py-6 md:px-10 md:py-8 ${
               phase.kind === "read" ? "invisible" : "visible"
@@ -315,6 +316,7 @@ export default function ProjectBrowser({
           >
             <div
               ref={panelRef}
+              data-lenis-prevent
               className="scrollbar-subtle h-full overflow-y-auto px-6 py-6 scrollbar-gutter-stable md:px-10 md:py-8"
             >
               {panelContent ? (

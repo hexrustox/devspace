@@ -1,0 +1,19 @@
+---
+---
+
+<script>
+  import "lenis/dist/lenis.css";
+  import { initLenis, destroyLenis } from "../lib/lenis";
+
+  const lenis = initLenis();
+
+  if (lenis) {
+    // Allow Lightbox and other UI to pause/resume scroll without importing lenis directly
+    document.addEventListener("lenis:stop", () => lenis.stop());
+    document.addEventListener("lenis:start", () => lenis.start());
+
+    // Clean up on full page unload / Astro view-transition swap (future-proof)
+    window.addEventListener("beforeunload", destroyLenis);
+    document.addEventListener("astro:before-swap", destroyLenis);
+  }
+</script>

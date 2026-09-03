@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { getLenis } from "../lib/lenis";
 
 type Props = ({ src: string; alt?: string } | { svg: string }) & {
   onClose: () => void;
@@ -48,13 +49,26 @@ export default function Lightbox(props: Props) {
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
+    const lenis = getLenis();
     const root = document.documentElement;
-    const prevOverflow = root.style.overflow;
-    root.style.overflow = "hidden";
+    let prevOverflow: string | null = null;
+    if (lenis) {
+      lenis.stop();
+    } else {
+      prevOverflow = root.style.overflow;
+      root.style.overflow = "hidden";
+    }
+    // Fallback event for Lenis instances initialized via Astro island
+    document.dispatchEvent(new CustomEvent("lenis:stop"));
     const raf = requestAnimationFrame(() => setShown(true));
     return () => {
       cancelAnimationFrame(raf);
-      root.style.overflow = prevOverflow;
+      document.dispatchEvent(new CustomEvent("lenis:start"));
+      if (lenis) {
+        lenis.start();
+      } else if (prevOverflow !== null) {
+        root.style.overflow = prevOverflow;
+      }
       opener?.focus();
     };
   }, []);
