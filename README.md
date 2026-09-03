@@ -12,25 +12,11 @@
 
 </div>
 
+![Portfolio preview — hero section with "Hello, I am a Software Engineer"](screenshot.png)
+
 This repository holds my personal portfolio: a single web page that tells a visitor everything they need to know about me as a developer. It shows who I am, the technologies I work with, the projects I have built, and how to reach me — all in one place, with a clean design and a few tasteful animations.
 
 The site is live at [ckhgy.com](https://ckhgy.com).
-
-## What a visitor sees
-
-The page reads top to bottom like a short introduction:
-
-```mermaid
-flowchart LR
-    A["Hero<br/>full-screen intro"] --> B["Skills<br/>15 technology cards"] --> C["Projects<br/>write-ups from GitHub"] --> D["Contact<br/>say hello"] --> E["Footer<br/>copyright"]
-```
-
-- **Hero** — a full-screen introduction that gently fades as you start scrolling.
-- **Skills** — a grid of fifteen technology cards, each with its official icon and a one-line description.
-- **Projects** — the centerpiece. Each project's write-up is read live from its GitHub page and shown right on the site, with a short animated reveal as it loads. Any image or diagram inside a write-up can be clicked to open it full-screen.
-- **Contact** — a friendly closing section with direct links: email, GitHub, and GitLab.
-
-The whole page sits on a slowly shifting aurora background, with frosted-glass panels and smooth scrolling.
 
 ## Built to a professional standard
 
