@@ -33,11 +33,11 @@ export default function Hero() {
     };
   }, [scrollProgress]);
 
-  const opacity = useTransform(scrollProgress, [0, 1], [1, 0]);
-  const scale = useTransform(scrollProgress, [0, 1], [1, 0.9]);
+  const opacity = useTransform(scrollProgress, [0.1, 1], [1, 0]);
+  const scale = useTransform(scrollProgress, [0.1, 1], [1, 0.9]);
   const blur = useTransform(
     scrollProgress,
-    [0, 1],
+    [0.1, 1],
     ["blur(0px)", "blur(10px)"],
   );
 
