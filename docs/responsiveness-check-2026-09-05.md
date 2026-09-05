@@ -9,8 +9,8 @@
 
 | Width | Status | Issues |
 |-------|--------|--------|
-| 320px | Fail | 1 high (horizontal overflow, clipped hero text) |
-| 375px | Warn | 2 medium (hero text touches edges; oversized skill cards) |
+| 320px | Pass | ✅ fixed — high issue resolved (typecheck verified, no browser re-check per request) |
+| 375px | Warn | 1 open medium (oversized skill cards, deferred); hero edges ✅ fixed, project touch targets ✅ fixed |
 | 768px | Pass | — |
 | 1024px | Pass | — |
 | 1280px | Pass | — |
@@ -18,11 +18,11 @@
 | 1920px | Pass | — |
 | 2560px | Pass | — |
 
-**Overall**: 3 issues across 2 breakpoints. The page is solid from 375px up; the only real break is below ~340px where the 72px hero heading forces a 20px horizontal overflow with visibly clipped text.
+**Overall**: 3 of 4 issues fixed (typecheck verified; browser re-check skipped per request). Remaining: aspect-square skill card dead space on mobile (deferred). Originally 3 issues across 2 breakpoints — the only real break was below ~340px where the 72px hero heading forced a 20px horizontal overflow with visibly clipped text.
 
 ## High Issues
 
-### Hero heading forces horizontal overflow and clips text at 320px — High
+### Hero heading forces horizontal overflow and clips text at 320px — High · ✅ Fixed
 
 **Width(s)**: 320px (overflow zone ≈ 320–339px; clean from ~340px up)
 **Check**: Horizontal overflow + text overflow
@@ -37,9 +37,11 @@ Note the hero section itself has `padding: 0` — all spacing comes from inner c
 
 **Fix suggestion**: Scale the display size down at small widths, e.g. make the `text-display` token fluid with `clamp(2.75rem, 8vw, 4.5rem)`, or add an `xs` override (`text-5xl` below `sm`). Optionally add horizontal padding to the hero section as a guard.
 
+**Fixed**: `--text-display` is now `clamp(2.75rem, 8vw, 4.5rem)` (`src/styles/global.css:36`) — 44px floor below ~550px so "Engineer" fits at 320px; 72px cap preserved at desktop.
+
 ## Medium Issues
 
-### Hero text touches viewport edges at 375px — Medium
+### Hero text touches viewport edges at 375px — Medium · ✅ Fixed
 
 **Width(s)**: ~340–375px
 **Check**: Whitespace balance
@@ -47,6 +49,8 @@ Note the hero section itself has `padding: 0` — all spacing comes from inner c
 Even where there is no measurable overflow (375px: `scrollWidth` = 375), the h1 and intro paragraph run edge-to-edge with zero breathing room — "Hello, I am a" and the paragraph's first line sit flush against the viewport edge. It reads as cramped rather than intentional.
 
 **Fix suggestion**: Give the hero content container `px-6` (matching the `skills`/`projects` sections) or reduce the display size at this range.
+
+**Fixed**: hero content container gets `px-6` (`src/components/Hero.tsx:51`), matching `Section.astro` side margins.
 
 ### Full-width aspect-square skill cards on mobile create excessive dead space — Medium
 
@@ -57,9 +61,11 @@ Below the 1→2 column transition (~400px), the skills grid is a single column o
 
 **Fix suggestion**: Cap card height on small screens (e.g. drop `aspect-square` below `sm` in favour of a fixed row height like `h-40`, or switch to `aspect-[4/3]`).
 
+**Status**: Deferred — intentionally not fixed.
+
 ## Low Issues
 
-### Project title links are 40px tall — Low
+### Project title links are 40px tall — Low · ✅ Fixed
 
 **Width(s)**: all mobile widths (< 768px)
 **Check**: Touch targets
@@ -67,6 +73,8 @@ Below the 1→2 column transition (~400px), the skills grid is a single column o
 The four project title links ("OctaDash", "Devspace", "Dotrift", "Nix Capsule") measure ~40px in height, just under the 44px touch-target guideline. All other interactive elements (hero CTAs, contact links) pass.
 
 **Fix suggestion**: Add `py-2` or `min-h-11` to the project link rows.
+
+**Fixed**: tab buttons get `min-h-11 flex items-center` (`src/components/ProjectBrowser.tsx:331`) → 44px pill, label vertically centered.
 
 ## Transition Analysis
 
@@ -88,23 +96,23 @@ Only breakpoints with findings included; 768–2560px are clean (no overflow, se
 
 ### 320px — Fail
 
-- **[High]** Horizontal overflow of 20px; hero h1 and paragraph clip at viewport edges; CTA row cut off on the right
+- **[High]** ✅ Fixed — fluid `text-display` token; no more overflow expected at 320px
 - Nav: N/A (no nav bar); hero CTAs above fold
 - Skills/projects stack to single column in correct order
 
 ### 375px — Warn
 
-- **[Medium]** Hero text runs edge-to-edge, no side margin
-- **[Medium]** 1-col aspect-square skill cards make the skills section ~5,343px tall
-- **[Low]** Project links 40px tall (touch target)
+- **[Medium]** ✅ Fixed — hero content container has `px-6` side margins
+- **[Medium]** 1-col aspect-square skill cards make the skills section ~5,343px tall (deferred)
+- **[Low]** ✅ Fixed — project links now 44px tall (`min-h-11`)
 
 ## Recommendations
 
 ### Quick Fixes (CSS only)
 
-- Fluid display size: `text-display` → `clamp()` or an `xs:` override so "Engineer" always fits (fixes the 320px overflow)
-- Add `px-6` to the hero content container for side margins at all widths
-- `min-h-11` on project title links
+- [x] Fluid display size: `text-display` → `clamp()` or an `xs:` override so "Engineer" always fits (fixes the 320px overflow)
+- [x] Add `px-6` to the hero content container for side margins at all widths
+- [x] `min-h-11` on project title links
 
 ### Structural Changes
 

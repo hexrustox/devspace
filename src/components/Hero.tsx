@@ -48,7 +48,7 @@ export default function Hero() {
       className="sticky top-0 grid min-h-screen place-items-center"
       style={{ opacity, scale, filter: blur }}
     >
-      <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center px-6 text-center">
         <h1 className="font-display text-display font-bold">
           Hello, I am a<br />
           Software Engineer

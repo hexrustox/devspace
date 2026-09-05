@@ -328,7 +328,7 @@ export default function ProjectBrowser({
               aria-controls={`${uid}-panel`}
               tabIndex={i === selected ? 0 : -1}
               onClick={() => select(i)}
-              className={`px-4 py-2 font-display font-bold transition-colors focus-visible:outline-none whitespace-nowrap ${
+              className={`flex min-h-11 items-center px-4 py-2 font-display font-bold transition-colors focus-visible:outline-none whitespace-nowrap ${
                 i === selected
                   ? "text-text"
                   : "text-muted hover:text-text cursor-pointer"
