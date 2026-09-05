@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import Glass from "./Glass";
 import type { Skill } from "../content";
+
+const CAN_HOVER =
+  typeof window !== "undefined" &&
+  window.matchMedia("(hover: hover)").matches;
 
 interface Props {
   skill: Skill;
@@ -10,8 +12,6 @@ interface Props {
 export default function SkillCard({
   skill: { name, icon, blurb, colors },
 }: Props) {
-  const [open, setOpen] = useState(false);
-
   const setAuroraColors = (value: Skill["colors"] | null) => {
     document.dispatchEvent(
       new CustomEvent("aurora:colors", { detail: { colors: value } }),
@@ -21,31 +21,21 @@ export default function SkillCard({
   return (
     <Glass
       onMouseEnter={() => {
-        setOpen(true);
-        setAuroraColors(colors);
+        if (CAN_HOVER) setAuroraColors(colors);
       }}
       onMouseLeave={() => {
-        setOpen(false);
-        setAuroraColors(null);
+        if (CAN_HOVER) setAuroraColors(null);
       }}
-      className="aspect-square w-full"
+      className="group aspect-square w-full"
     >
       <div className="p-4 aspect-square flex flex-col items-center justify-center text-center outline-none">
         <i className={`${icon} text-text text-4xl`}></i>
         <span className="mt-2 font-display text-body font-bold">{name}</span>
-        <AnimatePresence initial={false}>
-          {open && (
-            <motion.span
-              initial={{ opacity: 0, y: 4, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: 4, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="text-caption text-muted mt-2 block overflow-hidden"
-            >
-              {blurb}
-            </motion.span>
-          )}
-        </AnimatePresence>
+        <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-out group-hover:grid-rows-[1fr] group-hover:opacity-100 pointer-coarse:grid-rows-[1fr] pointer-coarse:opacity-100">
+          <span className="min-h-0 overflow-hidden text-caption text-muted">
+            {blurb}
+          </span>
+        </div>
       </div>
     </Glass>
   );

@@ -19,7 +19,9 @@ import Section from "./Section.astro";
 </Section>
 
 <style>
-  ul:has(li:hover) > li:not(:hover) {
-    opacity: 0.5;
+  @media (hover: hover) {
+    ul:has(li:hover) > li:not(:hover) {
+      opacity: 0.5;
+    }
   }
 </style>
