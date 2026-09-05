@@ -309,7 +309,7 @@ export default function ProjectBrowser({
         aria-label="Projects"
         onKeyDown={onKeyDown}
         style={tablistStyle}
-        className="no-scrollbar lg:scrollbar-subtle -mx-1 flex snap-x snap-proximity gap-2 overflow-x-auto px-1 py-1"
+        className="no-scrollbar lg:scrollbar-subtle -mx-1 flex snap-x snap-proximity gap-2 overflow-x-auto scroll-px-1 py-1"
       >
         {projects.map((p, i) => (
           <Glass
