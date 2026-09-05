@@ -28,6 +28,7 @@ const SWEEP_MS = 700;
 const SWEEP_MS_REDUCED = 200;
 const RAW_HOLD = 400;
 const SWEEP_EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
+const TAB_FADE_PX = 24;
 
 const rawBase = (readmeUrl: string) => readmeUrl.replace(/[^/]*$/, "");
 
@@ -73,6 +74,7 @@ export default function ProjectBrowser({
   const [wipe, setWipe] = useState(0);
   const [seen, setSeen] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [tabOverflow, setTabOverflow] = useState({ left: false, right: false });
   const [panelContent, setPanelContent] = useState<{
     url: string;
     markdown: string;
@@ -80,6 +82,7 @@ export default function ProjectBrowser({
 
   const cache = useRef(new Map<string, string>());
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tablistRef = useRef<HTMLDivElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const rawRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -119,6 +122,30 @@ export default function ProjectBrowser({
   }, [seen]);
 
   useEffect(() => {
+    const update = () => {
+      const el = tablistRef.current;
+      if (!el) return;
+      setTabOverflow({
+        left: el.scrollLeft > 1,
+        right: el.scrollLeft < el.scrollWidth - el.clientWidth - 1,
+      });
+    };
+    const el = tablistRef.current;
+    if (!el) return;
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    for (const child of el.children) ro.observe(child);
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [projects]);
+
+  useEffect(() => {
     if (!project) return;
     const cached = cache.current.get(project.readmeUrl);
     if (cached !== undefined) {
@@ -145,7 +172,8 @@ export default function ProjectBrowser({
   useEffect(() => {
     const controllers: AbortController[] = [];
     const toPrefetch = projects.filter(
-      (p) => !cache.current.has(p.readmeUrl) && p.readmeUrl !== project?.readmeUrl,
+      (p) =>
+        !cache.current.has(p.readmeUrl) && p.readmeUrl !== project?.readmeUrl,
     );
     for (const p of toPrefetch) {
       const controller = new AbortController();
@@ -171,7 +199,15 @@ export default function ProjectBrowser({
       setWipe(1);
     }, RAW_HOLD);
     return () => clearTimeout(t);
-  }, [seen, phaseKind, selected, attempt, stateStatus, stateMarkdown, project?.readmeUrl]);
+  }, [
+    seen,
+    phaseKind,
+    selected,
+    attempt,
+    stateStatus,
+    stateMarkdown,
+    project?.readmeUrl,
+  ]);
 
   useEffect(() => {
     if (phaseKind !== "sweep") return;
@@ -241,21 +277,46 @@ export default function ProjectBrowser({
     () =>
       ({
         "--wipe": wipe,
-        transition: reduced ? undefined : `--wipe ${SWEEP_MS}ms ${SWEEP_EASING}`,
+        transition: reduced
+          ? undefined
+          : `--wipe ${SWEEP_MS}ms ${SWEEP_EASING}`,
       }) as CSSProperties,
     [wipe, reduced],
   );
 
+  const tablistStyle: CSSProperties = {
+    maskImage: `linear-gradient(to right, ${
+      tabOverflow.left ? `transparent 0%, #000 ${TAB_FADE_PX}px` : `#000 0%`
+    }, ${
+      tabOverflow.right
+        ? `#000 calc(100% - ${TAB_FADE_PX}px), transparent 100%`
+        : `#000 100%`
+    })`,
+    WebkitMaskImage: `linear-gradient(to right, ${
+      tabOverflow.left ? `transparent 0%, #000 ${TAB_FADE_PX}px` : `#000 0%`
+    }, ${
+      tabOverflow.right
+        ? `#000 calc(100% - ${TAB_FADE_PX}px), transparent 100%`
+        : `#000 100%`
+    })`,
+  };
+
   return (
     <>
       <div
+        ref={tablistRef}
         role="tablist"
         aria-label="Projects"
         onKeyDown={onKeyDown}
-        className="flex gap-2"
+        style={tablistStyle}
+        className="no-scrollbar lg:scrollbar-subtle -mx-1 flex snap-x snap-proximity gap-2 overflow-x-auto px-1 py-1"
       >
         {projects.map((p, i) => (
-          <Glass key={p.readmeUrl} hover={i !== selected}>
+          <Glass
+            key={p.readmeUrl}
+            hover={i !== selected}
+            className="snap-start"
+          >
             <button
               ref={(el) => {
                 tabRefs.current[i] = el;
@@ -267,7 +328,7 @@ export default function ProjectBrowser({
               aria-controls={`${uid}-panel`}
               tabIndex={i === selected ? 0 : -1}
               onClick={() => select(i)}
-              className={`px-4 py-2 font-display font-bold transition-colors focus-visible:outline-none ${
+              className={`px-4 py-2 font-display font-bold transition-colors focus-visible:outline-none whitespace-nowrap ${
                 i === selected
                   ? "text-text"
                   : "text-muted hover:text-text cursor-pointer"

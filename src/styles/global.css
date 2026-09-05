@@ -47,6 +47,13 @@
   --default-transition-duration: 300ms;
 }
 
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility scrollbar-subtle {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklab, var(--color-muted) 45%, transparent)
