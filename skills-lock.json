@@ -25,6 +25,12 @@
       "skillPath": "skills/playwright-cli/SKILL.md",
       "computedHash": "f602822b51bcb6d033749c60731b8f1e80f308222fcb2e4af551905a817c6e08"
     },
+    "responsiveness-check": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/dev-tools/skills/responsiveness-check/SKILL.md",
+      "computedHash": "7b7e74472ecdfb8fa1b2a5d00af7c6caa4a1969e5f38367b314e13e6a77700de"
+    },
     "seo": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",

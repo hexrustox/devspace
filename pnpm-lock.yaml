@@ -269,8 +269,8 @@ importers:
         specifier: ^2.16.15
         version: 2.16.15(prettier-plugin-astro@0.14.1)(prettier@3.9.6)(typescript@6.0.3)
       '@playwright/cli':
-        specifier: ^0.1.18
-        version: 0.1.18
+        specifier: ^0.1.19
+        version: 0.1.19
       '@tailwindcss/language-server':
         specifier: ^0.16.0
         version: 0.16.0
@@ -1034,8 +1034,8 @@ packages:
   '@oxc-project/types@0.147.0':
     resolution: {integrity: sha512-IJ3s6ltHLp45S0bh7phkX+gJO7A1Wuz2EaqpAhb8WjqDwbzMiWKHhyyT42tskaWjEYXtHtVCPpnBJVT9+dcRLg==}
 
-  '@playwright/cli@0.1.18':
-    resolution: {integrity: sha512-ggNfYYH+GsZTGUiBEL8f6N5j0seYEUE52v+fIWqK/A36QG36cL0EJ79qWTXYO2uZMUU7vm+jk3x0fKCPL6UuIw==}
+  '@playwright/cli@0.1.19':
+    resolution: {integrity: sha512-eGXIsYa5D+dC6wHGf+9uEislhPGip1djK+yiNAD7BVsXN3WzzR1J4ClFAhYhyu7wSEFqhcPrqXAYeBJF1dKJ7A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2107,11 +2107,6 @@ packages:
       react-dom:
         optional: true
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -2754,13 +2749,13 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  playwright-core@1.63.0-alpha-2026-08-05:
-    resolution: {integrity: sha512-YussvUybTfBtyYbGXWh43f+5kNP03wg98M6mu4DphYET7PSbNVajsdLGjWE1xrsjqOw32i2wFlRP7U5mcOpMZg==}
+  playwright-core@1.63.0-alpha-2026-08-31:
+    resolution: {integrity: sha512-1ek0Lyr12h6jcs/WTcNoVtzZkQp7D/90PsMuBW/Rm6h3AsWAbzpqj0geMv8+8Tzzr9CSUYvg9kznrVZINQMXXw==}
     engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.63.0-alpha-2026-08-05:
-    resolution: {integrity: sha512-zbGZUK+JYkoDV3cUgfvh2czTBJL34Gmz5gHVI25xiIpvYSR17Q1M7TS8hnwECUe+IkKaeXbKrSyJTyogm2DVWw==}
+  playwright@1.63.0-alpha-2026-08-31:
+    resolution: {integrity: sha512-3XAsuznfu8jBVJ4QxdGvBkt0+b8ZFwuwJYyOfiIw5ZjUOrNLNRhKxzLzLuydou3gJ9c6eMwVqgzdiOwhy54Kzw==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -4145,10 +4140,10 @@ snapshots:
 
   '@oxc-project/types@0.147.0': {}
 
-  '@playwright/cli@0.1.18':
+  '@playwright/cli@0.1.19':
     dependencies:
-      playwright: 1.63.0-alpha-2026-08-05
-      playwright-core: 1.63.0-alpha-2026-08-05
+      playwright: 1.63.0-alpha-2026-08-31
+      playwright-core: 1.63.0-alpha-2026-08-31
 
   '@rolldown/binding-android-arm-eabi@1.2.6':
     optional: true
@@ -5274,9 +5269,6 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  fsevents@2.3.2:
-    optional: true
-
   fsevents@2.3.3:
     optional: true
 
@@ -6118,13 +6110,11 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  playwright-core@1.63.0-alpha-2026-08-05: {}
+  playwright-core@1.63.0-alpha-2026-08-31: {}
 
-  playwright@1.63.0-alpha-2026-08-05:
+  playwright@1.63.0-alpha-2026-08-31:
     dependencies:
-      playwright-core: 1.63.0-alpha-2026-08-05
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.63.0-alpha-2026-08-31
 
   points-on-curve@0.2.0: {}
 
