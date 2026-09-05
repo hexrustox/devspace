@@ -33,8 +33,55 @@ const TAB_FADE_PX = 24;
 const rawBase = (readmeUrl: string) => readmeUrl.replace(/[^/]*$/, "");
 
 const FENCE = /^\s*(```|~~~)/;
-const HEADING_RE = /^#{1,6}\s/;
-const BLOCKQUOTE_RE = /^>/;
+
+const INLINE_RE = /(`[^`]+`)|(!?\[[^\]]*\])(\([^)]*\))|(\*\*[^*]+\*\*)/g;
+
+type Seg = { text: string; cls: string };
+
+function inlineSegs(text: string, base: string): Seg[] {
+  const segs: Seg[] = [];
+  let last = 0;
+  for (const m of text.matchAll(INLINE_RE)) {
+    const i = m.index ?? 0;
+    if (i > last) segs.push({ text: text.slice(last, i), cls: base });
+    if (m[1]) {
+      segs.push({ text: m[1], cls: "text-green" });
+    } else if (m[2]) {
+      segs.push({ text: m[2], cls: "text-blue" });
+      segs.push({ text: m[3]!, cls: "text-muted/60" });
+    } else {
+      segs.push({ text: m[0], cls: "font-semibold text-text" });
+    }
+    last = i + m[0].length;
+  }
+  if (last < text.length) segs.push({ text: text.slice(last), cls: base });
+  return segs;
+}
+
+function tokenizeLine(line: string): Seg[] {
+  const heading = /^(#{1,6})(\s+)(.*)$/.exec(line);
+  if (heading) {
+    return [
+      { text: heading[1] + heading[2], cls: "text-muted/60" },
+      ...inlineSegs(heading[3]!, "text-text font-medium"),
+    ];
+  }
+  const quote = /^(\s*>+)(.*)$/.exec(line);
+  if (quote) {
+    return [
+      { text: quote[1] + " ", cls: "text-muted/60" },
+      ...inlineSegs(quote[2]!.replace(/^ /, ""), "text-muted italic"),
+    ];
+  }
+  const bullet = /^(\s*(?:[-*+]|\d+\.)\s)(.*)$/.exec(line);
+  if (bullet) {
+    return [
+      { text: bullet[1], cls: "text-purple" },
+      ...inlineSegs(bullet[2]!, "text-muted"),
+    ];
+  }
+  return inlineSegs(line, "text-muted");
+}
 
 function RawSource({ markdown }: { markdown: string }) {
   let inFence = false;
@@ -44,17 +91,19 @@ function RawSource({ markdown }: { markdown: string }) {
         const isEdge = FENCE.test(line);
         const wasFence = inFence;
         if (isEdge) inFence = !inFence;
-        const cls =
+        const segs: Seg[] =
           isEdge || wasFence
-            ? "text-muted/70"
-            : HEADING_RE.test(line)
-              ? "text-text font-medium"
-              : BLOCKQUOTE_RE.test(line)
-                ? "text-muted italic"
-                : "text-muted";
+            ? [{ text: line, cls: isEdge ? "text-purple" : "text-muted/70" }]
+            : tokenizeLine(line);
         return (
-          <span key={i} className={`block ${cls}`}>
-            {line === "" ? "\u00A0" : line}
+          <span key={i} className="block">
+            {line === ""
+              ? "\u00A0"
+              : segs.map((s, j) => (
+                  <span key={j} className={s.cls}>
+                    {s.text}
+                  </span>
+                ))}
           </span>
         );
       })}
